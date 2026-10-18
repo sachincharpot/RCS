@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>સહકારી મંડળી નોંધણી ફોર્મ (React App)</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- React 18 & Babel -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useMemo } = React;
+
+    // ==================== ANNEXURE-A DATA ====================
+    const ANNEXURE_A = {
+      "સે સેવા / પ્રાથમિક સેવા પ્રકારની મંડળીઓ": [
+        "પ્રાથમિક સેવા સહકારી મંડળી",
+        "પ્રાથમિક વિવિધ કાર્યકારી સહકારી મંડળી",
+        "પગારદાર કર્મચારીઓની શરાફી સહકારી મંડળી",
+        "મહિલાઓની બચત અને અથવા ધિરાણ સહકારી મંડળી",
+        "અન્ય બચત સહકારી મંડળી",
+        "નાગરીક સહકારી બેંકો",
+        "શરાફી સહકારી મંડળી",
+        "દુધ ઉત્પાદક સહકારી મંડળી/સંધ",
+        "સ્ટેટ કો.ઓપ.મિલ્ક માર્કેટીંગ ફેડરેશન",
+        "જિલ્લા દૂધ ઉત્પાદક સહકારી સંધ",
+        "પ્રાથમિક દૂધ ઉત્પા સહકારી મંડળી",
+        "જિલ્લા/તાલુકા સહકારી ખરીદ વેચાણ સંધ",
+        "પ્રાથમિક માર્કેટીંગ બજાર મંડળી",
+        "ટોચના સહકારી કેડરેશનો",
+        "મોટાકદની વિવિધ કાર્યકારી સહકારી મંડળી",
+        "રાજ્ય સહકારી બેંક",
+        "મધ્યસ્થ સહકારી બેંક",
+        "તાલુકા સહકારી બેંક",
+        "રાજ્ય સહકારી જમીન વિકાસ બેંક",
+        "પ્રાથમિક કૃષિ ધિરાણ મંડળી",
+        "કર્મચારીઓની ધિરાણ મંડળી",
+        "ફાર્મર પ્રોડયુસર સહકારી મંડળી",
+        "પ્રાકૃતિક ખેતી સહકારી મંડળી"
+      ],
+      "ઉ ઉત્પાદન/મંજુર ઉત્પાદન પ્રકારની સહકારી મંડળીઓ": [
+        "પ્રાથમિક મજુર કામદાર સહકારી મંડળી",
+        "ખેતી કામદારોની સહકારી મંડળી",
+        "જંગલ કામદાર સહકારી મંડળી",
+        "ઉત્પાદન સહકારી મંડળી",
+        "મરધા-બતકા ઉછેર સહકારી મંડળી",
+        "મત્સ્યોધ્યોગ સહકારી મંડળી/ સંધો",
+        "ફળ અને શાકભાજી ઉત્પાદકોની સહકારી મંડળી",
+        "તમાકુ ઉત્પન્ન બજાર મંડળી",
+        "શ્રમયોગી વિકાસ સહકારી મંડળી",
+        "શેરડી ઉત્પાદન કરનારી સહકારી મંડળી/ સંઘ",
+        "તમાકુ ઉત્પન્ન કરનારી સહકારી મંડળીઓ/ સંધ",
+        "કપાસ ઉત્પન્ન કરનારી સહકારી મંડળી/ સંધ",
+        "તેલીબિયા ઉત્પન્ન કરનારી સહકારી મંડળી સંધ",
+        "કપાસ જિનીંગ પ્રેસીંગ પ્રોસેસીંગ મડળી/ સંધ",
+        "ઓઇલ મિલ",
+        "હાથછડ ચોખાની મિલ",
+        "ચોખાની મિલ",
+        "રાજ્ય કક્ષાના મજુર કામદાર સંધ",
+        "જિલ્લા કક્ષાના મજુર કામદાર સંધ"
+      ],
+      "ભ ગ્રાહક સામે ગ્રાહક સહકારી ભંડાર પ્રકારની સહકારી મંડળી": [
+        "કન્ઝ્યુમર્સ ફેડરેશન",
+        "જથ્થાબંધ મધ્યસ્થ ગ્રાહક સહકારી ભંડાર",
+        "પ્રાથમિક ભંડારો(વિધ્યાર્થી) ગ્રાહક ભંડાર",
+        "રેલ્વે કામદાર ભંડાર",
+        "મિલ કામદાર ભંડાર(સહકારી કેરીનો સહિત)",
+        "રાજ્યકક્ષાના ગ્રાહક ભંડારો"
+      ],
+      "ધ ગૃહ મંડળીઓ": [
+        "ધર બાંધનારી સહકારી મંડળી",
+        "હાઉસિંગ મોર્ગેજ સોસાયટીઓ(રાજ્યકક્ષાનું ફેડરેશન",
+        "સહિયારા ભાડુઆતોની ગૃહ મંડળી",
+        "રાજ્યકક્ષાના ગૃહનિર્માણ સંઘો"
+      ],
+      "સા સામાન્ય અન્ય પ્રકારની મંડળીઓ": [
+        "શૈષણિક પ્રવૃતિઓની સેવા સહકારી મંડળી",
+        "સહકારી હોસ્પિટલ",
+        "બિનપરંપરાગત સહકારી મંડળી",
+        "સફાઇ કામદાર અને વિવિધ હેતુઓ માટે રચાતી સહકારી મં",
+        "ઇન્સ્યોરન્સ કો.ઓ.ઇલેકટ્રીસીટી મોટર ટ્રાન્સપોર્ટ કો.ઓ.સોસાયટી",
+        "મોટર ટ્રાન્સપોર્ટ કો ઓપ સોસાયટી",
+        "વાહન વ્યવહાર સહકારી મંડળી",
+        "રીક્ષા પુલ્સ",
+        "પ્રવાસન સહકારી મંડળી",
+        "રીસોટર્સ સહકારી મંડળી",
+        "વેસ્ટ લેન્ડ ડેવલપમેન્ટ સહકારી મંડળી",
+        "પુસ્તક પ્રકાશન સહકારી મંડળી",
+        "વન સંરક્ષણ સહકારી મંડળી",
+        "વિકાસ સેવા સહકારી મંડળી",
+        "હાઉસિંગ સર્વિસ સોસાયટી",
+        "કોમર્શિયલ કો.ઓ.હા.સોસાયટી",
+        "જમીન સરંક્ષણ ખેતીવિષયક બિનધિરાણ મંડળી",
+        "બેટર લીવીંગ સહકારી મંડળી",
+        "મહિલા બિનખેતીવિષયક બિનધિરાણ મંડળી",
+        "આરોગ્ય સેવ આઓ પુરી પાડતી સહકારી મંડળી",
+        "કુરિયર સર્વિસ પુરી પાડતી સહકારી મંડળી",
+        "ટીફીન સર્વિસ સહકારી મંડળી",
+        "સિનિયર સિટીઝન માટે વૃધ્ધાશ્રમ ચલાવતી સહકારી મંડળી",
+        "ટુરિસ્ટ/ગાઇડ પુરી પાડતી સહકારી મંડળી",
+        "ગાર્ડનીંગ સર્વિસ પુરી પાડતી સહકારી મંડળી",
+        "વિદ્યુત મંડળી",
+        "ધરેલુ નોકરની સેવા સહકારી મંડળી",
+        "કોમ્પ્યુટર્સને લગતી સેવા પુરી પાડનારી સ.મં.લી.",
+        "વેટરનરી સેવા પુરીએ પાડનારી સહકારી મંડળી લી",
+        "ડીમેસ્ટીક સર્વિસને લગતી સહકારી મંડળી લી.",
+        "સીકયોરીટી સર્વિસ પુરા પાડનારી સ.મ.લી.",
+        "આદિજાતી સહકારી મંડળી"
+      ],
+      "ખે ખેતી/પિયત પ્રકારની સહકારી મંડળીઓ": [
+        "ખેતી સહકારી મંડળી",
+        "પિયત સહકારી મંડળી",
+        "સિંચાઇ મંડળી",
+        "વૃક્ષ ઉછેર સહકારી મંડળી",
+        "પાણી પુરુ પાડનારી સહકારી મંડળી",
+        "સામુદાયિક ખેતી સહકારીએ મંડળી",
+        "સંયુકત ખેતી સહકારીએ મંડળી",
+        "ગોપાલક ખેતી સહકારી મંડળી",
+        "ગોપાલક સામુદાયિક સહકારી મંડળી",
+        "દુધ ઉત્પાદકોને ખેતી મંડળીઓ(ગોપાલકો દ્વારા ડેરી પ્રવૃતિઓ ચલાવતી ખેતી મંડળી)"
+      ],
+      "સ સહકારી સંધો": [
+        "રાજ્ય સહકારી સંધ",
+        "જિલ્લા સહકારી સંઘ"
+      ]
+    };
+
+    // ==================== ANNEXURE-B DATA (15 OBJECTIVES) ====================
+    const ANNEXURE_B = [
+      { id: "1", label: "૧. કૃષિ ધિરાણ અને કૃષિ સેવા" },
+      { id: "2", label: "૨. બિનખેતી ધિરાણ, બચત અને બેંકિંગ" },
+      { id: "3", label: "૩. દૂધ ઉત્પાદન, ડેરી અને પશુપાલન" },
+      { id: "4", label: "૪. કૃષિ ઉત્પાદન, માર્કેટિંગ અને વેચાણ" },
+      { id: "5", label: "૫. કૃષિ અને ઔદ્યોગિક પ્રોસેસિંગ તથા ઉત્પાદન" },
+      { id: "6", label: "૬. મજૂર, શ્રમિક અને રોજગાર" },
+      { id: "7", label: "૭. મત્સ્યોદ્યોગ" },
+      { id: "8", label: "૮. ગ્રાહક સહકારી પ્રવૃત્તિ અને વિતરણ" },
+      { id: "9", label: "૯. ગૃહનિર્માણ, રહેઠાણ અને મિલકત વ્યવસ્થાપન" },
+      { id: "10", label: "૧૦. શિક્ષણ, આરોગ્ય અને સામાજિક કલ્યાણ" },
+      { id: "11", label: "૧૧. પરિવહન, પ્રવાસન અને આતિથ્ય સેવા" },
+      { id: "12", label: "૧૨. સામાન્ય સેવા અને વ્યવસાયલક્ષી સેવાઓ" },
+      { id: "13", label: "૧૩. જળસંચય, સિંચાઈ અને પાણી પુરવઠો" },
+      { id: "14", label: "૧૪. જમીન, વન અને કુદરતી સંસાધન વિકાસ" },
+      { id: "15", label: "૧૫. સહકારી સંસ્થાઓનું સંવર્ધન, સંઘીય માળખું અને અન્ય પ્રવૃત્તિઓ" }
+    ];
+
+    // Auto-map A3 Sub-Type to Annexure-B Objective
+    const getObjectiveForSubType = (sub) => {
+      if (!sub) return "";
+      if (["પ્રાથમિક સેવા સહકારી મંડળી", "પ્રાથમિક વિવિધ કાર્યકારી સહકારી મંડળી", "મોટાકદની વિવિધ કાર્યકારી સહકારી મંડળી", "પ્રાથમિક કૃષિ ધિરાણ મંડળી", "રાજ્ય સહકારી જમીન વિકાસ બેંક"].includes(sub)) return "૧. કૃષિ ધિરાણ અને કૃષિ સેવા";
+      if (["પગારદાર કર્મચારીઓની શરાફી સહકારી મંડળી", "મહિલાઓની બચત અને અથવા ધિરાણ સહકારી મંડળી", "અન્ય બચત સહકારી મંડળી", "નાગરીક સહકારી બેંકો", "શરાફી સહકારી મંડળી", "રાજ્ય સહકારી બેંક", "મધ્યસ્થ સહકારી બેંક", "તાલુકા સહકારી બેંક", "કર્મચારીઓની ધિરાણ મંડળી"].includes(sub)) return "૨. બિનખેતી ધિરાણ, બચત અને બેંકિંગ";
+      if (["દુધ ઉત્પાદક સહકારી મંડળી/સંધ", "સ્ટેટ કો.ઓપ.મિલ્ક માર્કેટીંગ ફેડરેશન", "જિલ્લા દૂધ ઉત્પાદક સહકારી સંધ", "પ્રાથમિક દૂધ ઉત્પા સહકારી મંડળી", "મરધા-બતકા ઉછેર સહકારી મંડળી", "ગોપાલક ખેતી સહકારી મંડળી", "ગોપાલક સામુદાયિક સહકારી મંડળી", "દુધ ઉત્પાદકોને ખેતી મંડળીઓ(ગોપાલકો દ્વારા ડેરી પ્રવૃતિઓ ચલાવતી ખેતી મંડળી)", "વેટરનરી સેવા પુરીએ પાડનારી સહકારી મંડળી લી"].includes(sub)) return "૩. દૂધ ઉત્પાદન, ડેરી અને પશુપાલન";
+      if (["જિલ્લા/તાલુકા સહકારી ખરીદ વેચાણ સંધ", "પ્રાથમિક માર્કેટીંગ બજાર મંડળી", "ફળ અને શાકભાજી ઉત્પાદકોની સહકારી મંડળી", "તમાકુ ઉત્પન્ન બજાર મંડળી", "ફાર્મર પ્રોડયુસર સહકારી મંડળી", "પ્રાકૃતિક ખેતી સહકારી મંડળી", "ખેતી સહકારી મંડળી", "સામુદાયિક ખેતી સહકારીએ મંડળી", "સંયુકત ખેતી સહકારીએ મંડળી"].includes(sub)) return "૪. કૃષિ ઉત્પાદન, માર્કેટિંગ અને વેચાણ";
+      if (["ઉત્પાદન સહકારી મંડળી", "શેરડી ઉત્પાદન કરનારી સહકારી મંડળી/ સંઘ", "તમાકુ ઉત્પન્ન કરનારી સહકારી મંડળીઓ/ સંધ", "કપાસ ઉત્પન્ન કરનારી સહકારી મંડળી/ સંધ", "તેલીબિયા ઉત્પન્ન કરનારી સહકારી મંડળી સંધ", "કપાસ જિનીંગ પ્રેસીંગ પ્રોસેસીંગ મડળી/ સંધ", "ઓઇલ મિલ", "હાથછડ ચોખાની મિલ", "ચોખાની મિલ"].includes(sub)) return "૫. કૃષિ અને ઔદ્યોગિક પ્રોસેસિંગ તથા ઉત્પાદન";
+      if (["પ્રાથમિક મજુર કામદાર સહકારી મંડળી", "ખેતી કામદારોની સહકારી મંડળી", "જંગલ કામદાર સહકારી મંડળી", "શ્રમયોગી વિકાસ સહકારી મંડળી", "રાજ્ય કક્ષાના મજુર કામદાર સંધ", "જિલ્લા કક્ષાના મજુર કામદાર સંધ", "સફાઇ કામદાર અને વિવિધ હેતુઓ માટે રચાતી સહકારી મં"].includes(sub)) return "૬. મજૂર, શ્રમિક અને રોજગાર";
+      if (sub.includes("મત્સ્યોધ્યોગ")) return "૭. મત્સ્યોદ્યોગ";
+      if (["કન્ઝ્યુમર્સ ફેડરેશન", "જથ્થાબંધ મધ્યસ્થ ગ્રાહક સહકારી ભંડાર", "પ્રાથમિક ભંડારો(વિધ્યાર્થી) ગ્રાહક ભંડાર", "રેલ્વે કામદાર ભંડાર", "મિલ કામદાર ભંડાર(સહકારી કેરીનો સહિત)", "રાજ્યકક્ષાના ગ્રાહક ભંડારો"].includes(sub)) return "૮. ગ્રાહક સહકારી પ્રવૃત્તિ અને વિતરણ";
+      if (["ધર બાંધનારી સહકારી મંડળી", "હાઉસિંગ મોર્ગેજ સોસાયટીઓ(રાજ્યકક્ષાનું ફેડરેશન", "સહિયારા ભાડુઆતોની ગૃહ મંડળી", "રાજ્યકક્ષાના ગૃહનિર્માણ સંઘો", "હાઉસિંગ સર્વિસ સોસાયટી", "કોમર્શિયલ કો.ઓ.હા.સોસાયટી"].includes(sub)) return "૯. ગૃહનિર્માણ, રહેઠાણ અને મિલકત વ્યવસ્થાપન";
+      if (["શૈષણિક પ્રવૃતિઓની સેવા સહકારી મંડળી", "સહકારી હોસ્પિટલ", "બેટર લીવીંગ સહકારી મંડળી", "મહિલા બિનખેતીવિષયક બિનધિરાણ મંડળી", "આરોગ્ય સેવ આઓ પુરી પાડતી સહકારી મંડળી", "સિનિયર સિટીઝન માટે વૃધ્ધાશ્રમ ચલાવતી સહકારી મંડળી", "આદિજાતી સહકારી મંડળી"].includes(sub)) return "૧૦. શિક્ષણ, આરોગ્ય અને સામાજિક કલ્યાણ";
+      if (["મોટર ટ્રાન્સપોર્ટ કો ઓપ સોસાયટી", "વાહન વ્યવહાર સહકારી મંડળી", "રીક્ષા પુલ્સ", "પ્રવાસન સહકારી મંડળી", "રીસોટર્સ સહકારી મંડળી", "ટુરિસ્ટ/ગાઇડ પુરી પાડતી સહકારી મંડળી"].includes(sub)) return "૧૧. પરિવહન, પ્રવાસન અને આતિથ્ય સેવા";
+      if (["પિયત સહકારી મંડળી", "સિંચાઇ મંડળી", "પાણી પુરુ પાડનારી સહકારી મંડળી"].includes(sub)) return "૧૩. જળસંચય, સિંચાઈ અને પાણી પુરવઠો";
+      if (["વેસ્ટ લેન્ડ ડેવલપમેન્ટ સહકારી મંડળી", "વન સંરક્ષણ સહકારી મંડળી", "જમીન સરંક્ષણ ખેતીવિષયક બિનધિરાણ મંડળી", "વૃક્ષ ઉછેર સહકારી મંડળી"].includes(sub)) return "૧૪. જમીન, વન અને કુદરતી સંસાધન વિકાસ";
+      if (["ટોચના સહકારી કેડરેશનો", "રાજ્ય સહકારી સંધ", "જિલ્લા સહકારી સંઘ"].includes(sub)) return "૧૫. સહકારી સંસ્થાઓનું સંવર્ધન, સંઘીય માળખું અને અન્ય પ્રવૃત્તિઓ";
+      return "૧૨. સામાન્ય સેવા અને વ્યવસાયલક્ષી સેવાઓ";
+    };
+
+    // Sample Gujarat Locations for Dropdowns (A8, A9, A10)
+    const LOCATION_DATA = {
+      "ગાંધીનગર (Gandhinagar)": {
+        "ગાંધીનગર (Gandhinagar)": ["સેક્ટર-૧ (Sector-1)", "સેક્ટર-૧૧ (Sector-11)", "અડાલજ (Adalaj)", "સરગાસણ (Sargasan)", "કુડાસણ (Kudasan)"],
+        "કલોલ (Kalol)": ["કલોલ શહેર (Kalol City)", "છત્રાલ (Chhatral)", "પાનસર (Pansar)"],
+        "માણસા (Mansa)": ["માણસા શહેર (Mansa City)", "ચરાડા (Charada)", "લોદ્રા (Lodra)"],
+        "દહેગામ (Dahegam)": ["દહેગામ શહેર (Dahegam City)", "રખિયાલ (Rakhiyal)", "બહિયલ (Bahiyal)"]
+      },
+      "અમદાવાદ (Ahmedabad)": {
+        "અમદાવાદ શહેર (Ahmedabad City)": ["નવરંગપુરા (Navrangpura)", "મણિનગર (Maninagar)", "બોપલ (Bopal)", "ગોતા (Gota)"],
+        "સાણંદ (Sanand)": ["સાણંદ શહેર (Sanand City)", "ચેખલા (Chekhla)", "બોળ (Bol)"],
+        "દસ્ક્રોઈ (Daskroi)": ["બારેજા (Bareja)", "કઠવાડા (Kathwada)", "હાથીજણ (Hathijan)"]
+      },
+      "સુરત (Surat)": {
+        "સુરત શહેર (Surat City)": ["અડાજણ (Adajan)", "વરાછા (Varachha)", "કતારગામ (Katargam)"],
+        "બારડોલી (Bardoli)": ["બારડોલી શહેર (Bardoli City)", "કડોદ (Kadod)", "મઢી (Madhi)"],
+        "ચોર્યાસી (Choryasi)": ["સચિન (Sachin)", "હજીરા (Hazira)"]
+      },
+      "રાજકોટ (Rajkot)": {
+        "રાજકોટ (Rajkot)": ["રાજકોટ શહેર (Rajkot City)", "બેડી (Bedi)", "માધાપર (Madhapar)"],
+        "ગોંડલ (Gondal)": ["ગોંડલ શહેર (Gondal City)", "વીરપુર (Virpur)"]
+      },
+      "વડોદરા (Vadodara)": {
+        "વડોદરા (Vadodara)": ["અલકાપુરી (Alkapuri)", "માંજલપુર (Manjalpur)", "વાઘોડિયા રોડ (Waghodia Road)"],
+        "પાદરા (Padra)": ["પાદરા શહેર (Padra City)", "ચાણસદ (Chansad)"]
+      }
+    };
+
+    function App() {
+      // Part A State
+      const [formA, setFormA] = useState({
+        name: "",
+        type: "",
+        subType: "",
+        isFederal: "No",
+        isLimited: "Yes",
+        addr1: "",
+        addr2: "",
+        district: "",
+        taluka: "",
+        village: "",
+        pincode: "",
+        contact: "",
+        email: "",
+        area: "",
+        members: "",
+        objective: "",
+        fundsByShares: "Yes",
+        initialDeposit: "",
+        shareValue: "",
+        shareCapital: "",
+        accShareCapital: "",
+        entryFee: "",
+        totalEntryFee: "",
+        bankName: "",
+        bylawsPdfName: ""
+      });
+
+      // Part B State (Promoters)
+      const [indPromoters, setIndPromoters] = useState([]);
+      const [indDraft, setIndDraft] = useState({
+        designation: "Main Promoter / મુખ્ય પ્રમોટર",
+        name: "", address: "", district: "", taluka: "", village: "", pincode: "",
+        mobile: "", email: "", occupation: "", shareCap: "", entryFee: "",
+        pan: "", aadhaar: "", farmerReg: ""
+      });
+
+      const [socPromoters, setSocPromoters] = useState([]);
+      const [socDraft, setSocDraft] = useState({
+        designation: "Main Promoter / મુખ્ય પ્રમોટર",
+        socName: "", regNo: "", ncdId: "", address: "",
+        nomName: "", nomDesig: "Chairman / પ્રમુખ",
+        shareCap: "", entryFee: "", pan: ""
+      });
+
+      // Handlers for Part A
+      const handleAChange = (field, value) => {
+        setFormA(prev => {
+          const updated = { ...prev, [field]: value };
+          if (field === "type") {
+            updated.subType = "";
+            updated.objective = "";
+          }
+          if (field === "subType") {
+            updated.objective = getObjectiveForSubType(value);
+          }
+          if (field === "district") {
+            updated.taluka = "";
+            updated.village = "";
+          }
+          if (field === "taluka") {
+            updated.village = "";
+          }
+          return updated;
+        });
+      };
+
+      // Add Individual Promoter
+      const addIndPromoter = () => {
+        if (!indDraft.name.trim()) return alert("કૃપા કરીને પ્રમોટરનું નામ દાખલ કરો!");
+        setIndPromoters([...indPromoters, { ...indDraft, id: Date.now() }]);
+        setIndDraft({
+          designation: "Promoter / પ્રમોટર",
+          name: "", address: "", district: "", taluka: "", village: "", pincode: "",
+          mobile: "", email: "", occupation: "", shareCap: "", entryFee: "",
+          pan: "", aadhaar: "", farmerReg: ""
+        });
+      };
+
+      // Add Society Promoter
+      const addSocPromoter = () => {
+        if (!socDraft.socName.trim()) return alert("કૃપા કરીને પ્રમોટર સહકારી મંડળીનું નામ દાખલ કરો!");
+        setSocPromoters([...socPromoters, { ...socDraft, id: Date.now() }]);
+        setSocDraft({
+          designation: "Promoter / પ્રમોટર",
+          socName: "", regNo: "", ncdId: "", address: "",
+          nomName: "", nomDesig: "Chairman / પ્રમુખ",
+          shareCap: "", entryFee: "", pan: ""
+        });
+      };
+
+      // Determine Part C(i) group based on A3
+      const partCGroup = useMemo(() => {
+        const s = formA.subType;
+        if (!s) return null;
+        if (["પ્રાથમિક સેવા સહકારી મંડળી", "પ્રાથમિક વિવિધ કાર્યકારી સહકારી મંડળી", "પ્રાથમિક કૃષિ ધિરાણ મંડળી"].includes(s)) return "G1";
+        if (["દુધ ઉત્પાદક સહકારી મંડળી/સંધ", "સ્ટેટ કો.ઓપ.મિલ્ક માર્કેટીંગ ફેડરેશન", "જિલ્લા દૂધ ઉત્પાદક સહકારી સંધ", "પ્રાથમિક દૂધ ઉત્પા સહકારી મંડળી"].includes(s)) return "G2";
+        if (["મહિલાઓની બચત અને અથવા ધિરાણ સહકારી મંડળી", "અન્ય બચત સહકારી મંડળી", "શરાફી સહકારી મંડળી", "પગારદાર કર્મચારીઓની શરાફી સહકારી મંડળી", "કર્મચારીઓની ધિરાણ મંડળી"].includes(s)) return "G3";
+        if (["પિયત સહકારી મંડળી", "સિંચાઇ મંડળી", "પાણી પુરુ પાડનારી સહકારી મંડળી"].includes(s)) return "G4";
+        if (["પ્રાથમિક મજુર કામદાર સહકારી મંડળી", "ખેતી કામદારોની સહકારી મંડળી", "જંગલ કામદાર સહકારી મંડળી"].includes(s)) return "G5";
+        if (["ધર બાંધનારી સહકારી મંડળી", "સહિયારા ભાડુઆતોની ગૃહ મંડળી"].includes(s)) return "G6";
+        if (["હાઉસિંગ સર્વિસ સોસાયટી", "કોમર્શિયલ કો.ઓ.હા.સોસાયટી"].includes(s)) return "G7";
+        if (["પ્રાથમિક માર્કેટીંગ બજાર મંડળી", "ફાર્મર પ્રોડયુસર સહકારી મંડળી", "પ્રાકૃતિક ખેતી સહકારી મંડળી"].includes(s)) return "G8";
+        return "G9";
+      }, [formA.subType]);
+
+      const fullAddress = [formA.addr1, formA.addr2, formA.village, formA.taluka, formA.district, formA.pincode].filter(Boolean).join(", ");
+
+      return (
+        <div className="max-w-5xl mx-auto my-8 bg-white border border-slate-200 shadow-sm rounded-lg p-6 md:p-10">
+          {/* Header */}
+          <div className="border-b-2 border-slate-800 pb-4 mb-6 text-center">
+            <h1 className="text-xl md:text-2xl font-bold text-slate-900">
+              Application Form – Registration of Cooperative Society
+            </h1>
+            <p className="text-base text-slate-600 mt-1">(સહકારી મંડળી નોંધણી ફોર્મ)</p>
+          </div>
+
+          <form onSubmit={(e) => { e.preventDefault(); alert("અરજી સફળતાપૂર્વક સબમિટ થઈ ગઈ છે!"); }}>
+            
+            {/* ==================== PART A ==================== */}
+            <div className="mb-8">
+              <h2 className="text-base font-bold bg-slate-100 px-4 py-2.5 border-l-4 border-slate-800 mb-4">
+                PART A : General Details / સામાન્ય વિગતો
+              </h2>
+
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                {/* A1 */}
+                <div className="md:col-span-12">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A1. Proposed Name of Cooperative Society <span className="font-normal text-slate-500 block">સુચિત સહકારી મંડળીનું નામ</span>
+                  </label>
+                  <input type="text" required value={formA.name} onChange={e => handleAChange("name", e.target.value)}
+                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-slate-800" />
+                </div>
+
+                {/* A2 */}
+                <div className="md:col-span-6">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A2. Type of Co-operative Societies <span className="font-normal text-slate-500 block">સહકારી મંડળીનો પ્રકાર (Annexure-A)</span>
+                  </label>
+                  <select required value={formA.type} onChange={e => handleAChange("type", e.target.value)}
+                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm bg-white">
+                    <option value="">-- પ્રકાર પસંદ કરો --</option>
+                    {Object.keys(ANNEXURE_A).map(t => <option key={t} value={t}>{t}</option>)}
+                  </select>
+                </div>
+
+                {/* A3 */}
+                <div className="md:col-span-6">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A3. Society Type Details <span className="font-normal text-slate-500 block">સહકારી મંડળીના પ્રકારની વિગત (Annexure-A)</span>
+                  </label>
+                  <select required value={formA.subType} onChange={e => handleAChange("subType", e.target.value)}
+                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm bg-white">
+                    <option value="">-- પેટા પ્રકાર પસંદ કરો --</option>
+                    {(ANNEXURE_A[formA.type] || []).map(st => <option key={st} value={st}>{st}</option>)}
+                  </select>
+                </div>
+
+                {/* A4 */}
+                <div className="md:col-span-6">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A4. Is proposed Cooperative Society Federal? (Yes/No) <span className="font-normal text-slate-500 block">સુચિત સહકારી મંડળી સમવાયી છે? (હા/ના)</span>
+                  </label>
+                  <div className="flex gap-6 pt-1 text-sm">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="radio" name="isFederal" value="No" checked={formA.isFederal === "No"} onChange={e => handleAChange("isFederal", e.target.value)} /> No / ના
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="radio" name="isFederal" value="Yes" checked={formA.isFederal === "Yes"} onChange={e => handleAChange("isFederal", e.target.value)} /> Yes / હા
+                    </label>
+                  </div>
+                </div>
+
+                {/* A5 */}
+                <div className="md:col-span-6">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A5. Is the proposed cooperative society Limited? (Yes/No) <span className="font-normal text-slate-500 block">શું પ્રસ્તાવિત સહકારી મંડળી મર્યાદિત છે? (હા/ના)</span>
+                  </label>
+                  <div className="flex gap-6 pt-1 text-sm">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="radio" name="isLimited" value="Yes" checked={formA.isLimited === "Yes"} onChange={e => handleAChange("isLimited", e.target.value)} /> Yes / હા
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="radio" name="isLimited" value="No" checked={formA.isLimited === "No"} onChange={e => handleAChange("isLimited", e.target.value)} /> No / ના
+                    </label>
+                  </div>
+                </div>
+
+                {/* A6 & A7 */}
+                <div className="md:col-span-6">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A6. Address Line 1 <span className="font-normal text-slate-500 block">સરનામું લાઇન ૧</span>
+                  </label>
+                  <input type="text" value={formA.addr1} onChange={e => handleAChange("addr1", e.target.value)}
+                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm" />
+                </div>
+
+                <div className="md:col-span-6">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A7. Address Line 2 <span className="font-normal text-slate-500 block">સરનામું લાઇન ૨</span>
+                  </label>
+                  <input type="text" value={formA.addr2} onChange={e => handleAChange("addr2", e.target.value)}
+                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm" />
+                </div>
+
+                {/* A8, A9, A10 Dropdowns & A11 Pincode */}
+                <div className="md:col-span-3">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A8. District <span className="font-normal text-slate-500 block">જિલ્લો (Dropdown)</span>
+                  </label>
+                  <select value={formA.district} onChange={e => handleAChange("district", e.target.value)}
+                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm bg-white">
+                    <option value="">-- જિલ્લો પસંદ કરો --</option>
+                    {Object.keys(LOCATION_DATA).map(d => <option key={d} value={d}>{d}</option>)}
+                  </select>
+                </div>
+
+                <div className="md:col-span-3">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A9. Taluka <span className="font-normal text-slate-500 block">તાલુકો (Dropdown)</span>
+                  </label>
+                  <select value={formA.taluka} onChange={e => handleAChange("taluka", e.target.value)}
+                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm bg-white">
+                    <option value="">-- તાલુકો પસંદ કરો --</option>
+                    {Object.keys(LOCATION_DATA[formA.district] || {}).map(t => <option key={t} value={t}>{t}</option>)}
+                  </select>
+                </div>
+
+                <div className="md:col-span-3">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A10. Village / City <span className="font-normal text-slate-500 block">ગામ / શહેર (Dropdown)</span>
+                  </label>
+                  <select value={formA.village} onChange={e => handleAChange("village", e.target.value)}
+                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm bg-white">
+                    <option value="">-- ગામ/શહેર પસંદ કરો --</option>
+                    {((LOCATION_DATA[formA.district] || {})[formA.taluka] || []).map(v => <option key={v} value={v}>{v}</option>)}
+                  </select>
+                </div>
+
+                <div className="md:col-span-3">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A11. Pincode <span className="font-normal text-slate-500 block">પિનકોડ (6 Digit Number)</span>
+                  </label>
+                  <input type="text" maxLength="6" pattern="\d{6}" placeholder="6 Digits" value={formA.pincode}
+                    onChange={e => handleAChange("pincode", e.target.value.replace(/\D/g, ""))}
+                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm" />
+                </div>
+
+                {/* A12 & A13 */}
+                <div className="md:col-span-6">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A12. Cooperative Society Contact Number <span className="font-normal text-slate-500 block">સંપર્ક નંબર (10 Digit Number)</span>
+                  </label>
+                  <input type="tel" maxLength="10" pattern="\d{10}" placeholder="10 Digit Mobile/Phone" value={formA.contact}
+                    onChange={e => handleAChange("contact", e.target.value.replace(/\D/g, ""))}
+                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm" />
+                </div>
+
+                <div className="md:col-span-6">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A13. Cooperative Society Email ID <span className="font-normal text-slate-500 block">સહકારી મંડળીનો ઈ-મેલ</span>
+                  </label>
+                  <input type="email" placeholder="example@domain.com" value={formA.email}
+                    onChange={e => handleAChange("email", e.target.value)}
+                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm" />
+                </div>
+
+                {/* A14 & A15 */}
+                <div className="md:col-span-8">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A14. Area of Operation of the proposed Cooperative Society <span className="font-normal text-slate-500 block">સુચિત સહકારી મંડળીનો કાર્યવિસ્તાર</span>
+                  </label>
+                  <input type="text" value={formA.area} onChange={e => handleAChange("area", e.target.value)}
+                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm" />
+                </div>
+
+                <div className="md:col-span-4">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A15. Total Number of Members <span className="font-normal text-slate-500 block">કુલ સભાસદ સંખ્યા (Number)</span>
+                  </label>
+                  <input type="number" min="1" value={formA.members} onChange={e => handleAChange("members", e.target.value)}
+                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm" />
+                </div>
+
+                {/* A16 Annexure-B Dropdown */}
+                <div className="md:col-span-12">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A16. Objectives of Proposed Cooperative Society <span className="font-normal text-slate-500 block">સુચિત સહકારી મંડળીના ઉદ્દેશો (Annexure-B)</span>
+                  </label>
+                  <select required value={formA.objective} onChange={e => handleAChange("objective", e.target.value)}
+                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm bg-white">
+                    <option value="">-- મુખ્ય ઉદ્દેશ / વર્ગ પસંદ કરો (Annexure-B) --</option>
+                    {ANNEXURE_B.map(obj => <option key={obj.id} value={obj.label}>{obj.label}</option>)}
+                  </select>
+                  <p className="text-xs text-blue-600 mt-1">* A3 માં મંડળીનો પેટા-પ્રકાર પસંદ કરતા Annexure-B મુજબનો ઉદ્દેશ આપોઆપ પસંદ થઈ જશે.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* ==================== FINANCIAL DETAILS ==================== */}
+            <div className="mb-8">
+              <h2 className="text-base font-bold bg-slate-100 px-4 py-2.5 border-l-4 border-slate-800 mb-4">
+                Financial Details / નાણાકીય વિગતો
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                <div className="md:col-span-6">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A17. Are the funds raised through shares? (Yes/No) <span className="font-normal text-slate-500 block">શું ભંડોળ શેર દ્વારા એકત્ર કરવામાં આવે છે? (હા/ના)</span>
+                  </label>
+                  <div className="flex gap-6 pt-1 text-sm">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="radio" name="fundsByShares" value="Yes" checked={formA.fundsByShares === "Yes"} onChange={e => handleAChange("fundsByShares", e.target.value)} /> Yes / હા
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="radio" name="fundsByShares" value="No" checked={formA.fundsByShares === "No"} onChange={e => handleAChange("fundsByShares", e.target.value)} /> No / ના
+                    </label>
+                  </div>
+                </div>
+
+                <div className="md:col-span-6">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A18. Initial Deposit in Nationalised Bank (INR) <span className="font-normal text-slate-500 block">રાષ્ટ્રીયકૃત બેંકમાં શેર મૂડી માટે પ્રારંભિક થાપણ (રૂ.)</span>
+                  </label>
+                  <input type="number" min="0" value={formA.initialDeposit} onChange={e => handleAChange("initialDeposit", e.target.value)}
+                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm" />
+                </div>
+
+                <div className="md:col-span-4">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A19. Value of one Share (INR) <span className="font-normal text-slate-500 block">એક શેરની રકમ (રૂ)</span>
+                  </label>
+                  <input type="number" min="0" value={formA.shareValue} onChange={e => handleAChange("shareValue", e.target.value)}
+                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm" />
+                </div>
+
+                <div className="md:col-span-4">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A20. Share Capital (INR) <span className="font-normal text-slate-500 block">શેર કેપીટલ (રૂ.)</span>
+                  </label>
+                  <input type="number" min="0" value={formA.shareCapital} onChange={e => handleAChange("shareCapital", e.target.value)}
+                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm" />
+                </div>
+
+                <div className="md:col-span-4">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A21. Accumulated share capital (INR) <span className="font-normal text-slate-500 block">ભરપાઈ થયેલ શેરફાળો (રૂ.)</span>
+                  </label>
+                  <input type="number" min="0" value={formA.accShareCapital} onChange={e => handleAChange("accShareCapital", e.target.value)}
+                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm" />
+                </div>
+
+                <div className="md:col-span-4">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A22. Member Entry Fee (INR) <span className="font-normal text-slate-500 block">સભ્ય દાખલ ફી (રૂ)</span>
+                  </label>
+                  <input type="number" min="0" value={formA.entryFee} onChange={e => handleAChange("entryFee", e.target.value)}
+                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm" />
+                </div>
+
+                <div className="md:col-span-4">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A23. Total Entry Fee Collected (INR) <span className="font-normal text-slate-500 block">કૂલ મેળવેલ દાખલ ફી (રૂ)</span>
+                  </label>
+                  <input type="number" min="0" value={formA.totalEntryFee} onChange={e => handleAChange("totalEntryFee", e.target.value)}
+                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm" />
+                </div>
+
+                <div className="md:col-span-4">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A24. Bank of Proposed Cooperative Society <span className="font-normal text-slate-500 block">સુચિત સહકારી મંડળીની બેંક</span>
+                  </label>
+                  <input type="text" value={formA.bankName} onChange={e => handleAChange("bankName", e.target.value)}
+                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm" />
+                </div>
+              </div>
+            </div>
+
+            {/* ==================== PART B ==================== */}
+            <div className="mb-8">
+              <h2 className="text-base font-bold bg-slate-100 px-4 py-2.5 border-l-4 border-slate-800 mb-4">
+                PART B – PROMOTER & MEMBER DETAILS / પ્રમોટરની વિગત
+              </h2>
+
+              {formA.isFederal === "No" ? (
+                <div>
+                  <h3 className="text-sm font-semibold text-slate-700 mb-3">
+                    (In Case of Non-Federal Society - A4) Individual Promoter Details / વ્યક્તિગત પ્રમોટરની વિગત
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-3 bg-slate-50 p-4 rounded border border-slate-200">
+                    <div className="md:col-span-4">
+                      <label className="block text-xs font-semibold mb-1">Designation / હોદ્દો</label>
+                      <select value={indDraft.designation} onChange={e => setIndDraft({...indDraft, designation: e.target.value})}
+                        className="w-full border border-slate-300 rounded px-2.5 py-1.5 text-sm bg-white">
+                        <option>Main Promoter / મુખ્ય પ્રમોટર</option>
+                        <option>Promoter / પ્રમોટર</option>
+                      </select>
+                    </div>
+                    <div className="md:col-span-4">
+                      <label className="block text-xs font-semibold mb-1">Name / નામ</label>
+                      <input type="text" value={indDraft.name} onChange={e => setIndDraft({...indDraft, name: e.target.value})}
+                        className="w-full border border-slate-300 rounded px-2.5 py-1.5 text-sm bg-white" />
+                    </div>
+                    <div className="md:col-span-4">
+                      <label className="block text-xs font-semibold mb-1">Address / સરનામું</label>
+                      <input type="text" value={indDraft.address} onChange={e => setIndDraft({...indDraft, address: e.target.value})}
+                        className="w-full border border-slate-300 rounded px-2.5 py-1.5 text-sm bg-white" />
+                    </div>
+                    <div className="md:col-span-3">
+                      <label className="block text-xs font-semibold mb-1">District / જિલ્લો</label>
+                      <input type="text" value={indDraft.district} onChange={e => setIndDraft({...indDraft, district: e.target.value})}
+                        className="w-full border border-slate-300 rounded px-2.5 py-1.5 text-sm bg-white" />
+                    </div>
+                    <div className="md:col-span-3">
+                      <label className="block text-xs font-semibold mb-1">Taluka / તાલુકો</label>
+                      <input type="text" value={indDraft.taluka} onChange={e => setIndDraft({...indDraft, taluka: e.target.value})}
+                        className="w-full border border-slate-300 rounded px-2.5 py-1.5 text-sm bg-white" />
+                    </div>
+                    <div className="md:col-span-3">
+                      <label className="block text-xs font-semibold mb-1">Village / ગામ</label>
+                      <input type="text" value={indDraft.village} onChange={e => setIndDraft({...indDraft, village: e.target.value})}
+                        className="w-full border border-slate-300 rounded px-2.5 py-1.5 text-sm bg-white" />
+                    </div>
+                    <div className="md:col-span-3">
+                      <label className="block text-xs font-semibold mb-1">Pincode / પિનકોડ</label>
+                      <input type="text" maxLength="6" value={indDraft.pincode} onChange={e => setIndDraft({...indDraft, pincode: e.target.value.replace(/\D/g, "")})}
+                        className="w-full border border-slate-300 rounded px-2.5 py-1.5 text-sm bg-white" />
+                    </div>
+                    <div className="md:col-span-4">
+                      <label className="block text-xs font-semibold mb-1">Mobile Number / મોબાઇલ નંબર</label>
+                      <input type="tel" maxLength="10" value={indDraft.mobile} onChange={e => setIndDraft({...indDraft, mobile: e.target.value.replace(/\D/g, "")})}
+                        className="w-full border border-slate-300 rounded px-2.5 py-1.5 text-sm bg-white" />
+                    </div>
+                    <div className="md:col-span-4">
+                      <label className="block text-xs font-semibold mb-1">Email ID / ઈ-મેલ આઈડી</label>
+                      <input type="email" value={indDraft.email} onChange={e => setIndDraft({...indDraft, email: e.target.value})}
+                        className="w-full border border-slate-300 rounded px-2.5 py-1.5 text-sm bg-white" />
+                    </div>
+                    <div className="md:col-span-4">
+                      <label className="block text-xs font-semibold mb-1">Occupation / વ્યવસાય</label>
+                      <input type="text" value={indDraft.occupation} onChange={e => setIndDraft({...indDraft, occupation: e.target.value})}
+                        className="w-full border border-slate-300 rounded px-2.5 py-1.5 text-sm bg-white" />
+                    </div>
+                    <div className="md:col-span-3">
+                      <label className="block text-xs font-semibold mb-1">Share Capital (INR) / શેર કેપીટલ</label>
+                      <input type="number" value={indDraft.shareCap} onChange={e => setIndDraft({...indDraft, shareCap: e.target.value})}
+                        className="w-full border border-slate-300 rounded px-2.5 py-1.5 text-sm bg-white" />
+                    </div>
+                    <div className="md:col-span-3">
+                      <label className="block text-xs font-semibold mb-1">Entry Fee (INR) / દાખલ ફી</label>
+                      <input type="number" value={indDraft.entryFee} onChange={e => setIndDraft({...indDraft, entryFee: e.target.value})}
+                        className="w-full border border-slate-300 rounded px-2.5 py-1.5 text-sm bg-white" />
+                    </div>
+                    <div className="md:col-span-3">
+                      <label className="block text-xs font-semibold mb-1">PAN / પાન કાર્ડ નંબર</label>
+                      <input type="text" value={indDraft.pan} onChange={e => setIndDraft({...indDraft, pan: e.target.value})}
+                        className="w-full border border-slate-300 rounded px-2.5 py-1.5 text-sm bg-white" />
+                    </div>
+                    <div className="md:col-span-3">
+                      <label className="block text-xs font-semibold mb-1">Aadhaar Card No. / આધાર કાર્ડ નંબર</label>
+                      <input type="text" placeholder="[Aadhaar Redacted]" value={indDraft.aadhaar} onChange={e => setIndDraft({...indDraft, aadhaar: e.target.value})}
+                        className="w-full border border-slate-300 rounded px-2.5 py-1.5 text-sm bg-white" />
+                    </div>
+                    <div className="md:col-span-4">
+                      <label className="block text-xs font-semibold mb-1">Farmers Registry No. / ખેડૂત રજિસ્ટ્રી નંબર</label>
+                      <input type="text" value={indDraft.farmerReg} onChange={e => setIndDraft({...indDraft, farmerReg: e.target.value})}
+                        className="w-full border border-slate-300 rounded px-2.5 py-1.5 text-sm bg-white" />
+                    </div>
+                    <div className="md:col-span-4">
+                      <label className="block text-xs font-semibold mb-1">Signature / સહી (Image Upload)</label>
+                      <input type="file" accept="image/*" className="text-xs w-full pt-1" />
+                    </div>
+                    <div className="md:col-span-4">
+                      <label className="block text-xs font-semibold mb-1">Identity Card / ઓળખકાર્ડ (PDF Upload)</label>
+                      <input type="file" accept=".pdf" className="text-xs w-full pt-1" />
+                    </div>
+                    <div className="md:col-span-12 pt-2">
+                      <button type="button" onClick={addIndPromoter} className="bg-slate-800 text-white text-xs px-4 py-2 rounded hover:bg-slate-700">
+                        + Add Promoter / પ્રમોટર ઉમેરો
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Table of Added Individual Promoters */}
+                  <div className="overflow-x-auto mt-4">
+                    <table className="w-full border-collapse border border-slate-200 text-xs">
+                      <thead className="bg-slate-100">
+                        <tr>
+                          <th className="border p-2">#</th>
+                          <th className="border p-2">Designation</th>
+                          <th className="border p-2">Name</th>
+                          <th className="border p-2">Mobile</th>
+                          <th className="border p-2">Share Capital</th>
+                          <th className="border p-2">Entry Fee</th>
+                          <th className="border p-2">PAN</th>
+                          <th className="border p-2">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {indPromoters.length === 0 ? (
+                          <tr><td colSpan="8" className="text-center p-3 text-slate-400">હજુ સુધી કોઈ પ્રમોટર ઉમેરાયેલ નથી.</td></tr>
+                        ) : indPromoters.map((p, idx) => (
+                          <tr key={p.id}>
+                            <td className="border p-2">{idx + 1}</td>
+                            <td className="border p-2">{p.designation}</td>
+                            <td className="border p-2">{p.name}</td>
+                            <td className="border p-2">{p.mobile}</td>
+                            <td className="border p-2">{p.shareCap}</td>
+                            <td className="border p-2">{p.entryFee}</td>
+                            <td className="border p-2">{p.pan}</td>
+                            <td className="border p-2">
+                              <button type="button" onClick={() => setIndPromoters(indPromoters.filter(item => item.id !== p.id))}
+                                className="text-red-600 underline">Remove</button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <h3 className="text-sm font-semibold text-slate-700 mb-3">
+                    Promoter Cooperative Society Details / પ્રમોટર સહકારી મંડળીની વિગત
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-3 bg-slate-50 p-4 rounded border border-slate-200">
+                    <div className="md:col-span-4">
+                      <label className="block text-xs font-semibold mb-1">Designation / હોદ્દો</label>
+                      <select value={socDraft.designation} onChange={e => setSocDraft({...socDraft, designation: e.target.value})}
+                        className="w-full border border-slate-300 rounded px-2.5 py-1.5 text-sm bg-white">
+                        <option>Main Promoter / મુખ્ય પ્રમોટર</option>
+                        <option>Promoter / પ્રમોટર</option>
+                      </select>
+                    </div>
+                    <div className="md:col-span-4">
+                      <label className="block text-xs font-semibold mb-1">Promoter Society Name (Search DB)</label>
+                      <input type="text" placeholder="ડેટાબેઝમાંથી શોધો..." value={socDraft.socName} onChange={e => setSocDraft({...socDraft, socName: e.target.value})}
+                        className="w-full border border-slate-300 rounded px-2.5 py-1.5 text-sm bg-white" />
+                    </div>
+                    <div className="md:col-span-4">
+                      <label className="block text-xs font-semibold mb-1">Registration Number (Search DB)</label>
+                      <input type="text" placeholder="નોંધણી નંબર શોધો..." value={socDraft.regNo} onChange={e => setSocDraft({...socDraft, regNo: e.target.value})}
+                        className="w-full border border-slate-300 rounded px-2.5 py-1.5 text-sm bg-white" />
+                    </div>
+                    <div className="md:col-span-4">
+                      <label className="block text-xs font-semibold mb-1">NCD ID (Search DB)</label>
+                      <input type="text" placeholder="NCD ID..." value={socDraft.ncdId} onChange={e => setSocDraft({...socDraft, ncdId: e.target.value})}
+                        className="w-full border border-slate-300 rounded px-2.5 py-1.5 text-sm bg-white" />
+                    </div>
+                    <div className="md:col-span-8">
+                      <label className="block text-xs font-semibold mb-1">Promoter Society Address / સરનામું</label>
+                      <input type="text" value={socDraft.address} onChange={e => setSocDraft({...socDraft, address: e.target.value})}
+                        className="w-full border border-slate-300 rounded px-2.5 py-1.5 text-sm bg-white" />
+                    </div>
+                    <div className="md:col-span-6">
+                      <label className="block text-xs font-semibold mb-1">Nominated Person Name / નામાંકિત વ્યક્તિનું નામ</label>
+                      <input type="text" value={socDraft.nomName} onChange={e => setSocDraft({...socDraft, nomName: e.target.value})}
+                        className="w-full border border-slate-300 rounded px-2.5 py-1.5 text-sm bg-white" />
+                    </div>
+                    <div className="md:col-span-6">
+                      <label className="block text-xs font-semibold mb-1">Nominated Person Designation / હોદ્દો</label>
+                      <select value={socDraft.nomDesig} onChange={e => setSocDraft({...socDraft, nomDesig: e.target.value})}
+                        className="w-full border border-slate-300 rounded px-2.5 py-1.5 text-sm bg-white">
+                        <option>Chairman / પ્રમુખ</option>
+                        <option>Managing Director / મેનેજિંગ ડિરેક્ટર</option>
+                        <option>Director / ડિરેક્ટર</option>
+                        <option>CEO / સીઈઓ</option>
+                        <option>Member / સભાસદ</option>
+                        <option>Officer / અધિકારી</option>
+                      </select>
+                    </div>
+                    <div className="md:col-span-4">
+                      <label className="block text-xs font-semibold mb-1">Share Capital (INR) / શેર કેપીટલ</label>
+                      <input type="number" value={socDraft.shareCap} onChange={e => setSocDraft({...socDraft, shareCap: e.target.value})}
+                        className="w-full border border-slate-300 rounded px-2.5 py-1.5 text-sm bg-white" />
+                    </div>
+                    <div className="md:col-span-4">
+                      <label className="block text-xs font-semibold mb-1">Entry Fee Paid (INR) / ભરેલ દાખલ ફી</label>
+                      <input type="number" value={socDraft.entryFee} onChange={e => setSocDraft({...socDraft, entryFee: e.target.value})}
+                        className="w-full border border-slate-300 rounded px-2.5 py-1.5 text-sm bg-white" />
+                    </div>
+                    <div className="md:col-span-4">
+                      <label className="block text-xs font-semibold mb-1">Promoter Society PAN / પાન નંબર</label>
+                      <input type="text" value={socDraft.pan} onChange={e => setSocDraft({...socDraft, pan: e.target.value})}
+                        className="w-full border border-slate-300 rounded px-2.5 py-1.5 text-sm bg-white" />
+                    </div>
+                    <div className="md:col-span-6">
+                      <label className="block text-xs font-semibold mb-1">Resolution for Nomination / નામાંકન અંગેનો ઠરાવ (PDF)</label>
+                      <input type="file" accept=".pdf" className="text-xs w-full pt-1" />
+                    </div>
+                    <div className="md:col-span-6">
+                      <label className="block text-xs font-semibold mb-1">Nominated Person ID Card / ઓળખકાર્ડ (PDF)</label>
+                      <input type="file" accept=".pdf" className="text-xs w-full pt-1" />
+                    </div>
+                    <div className="md:col-span-12 pt-2">
+                      <button type="button" onClick={addSocPromoter} className="bg-slate-800 text-white text-xs px-4 py-2 rounded hover:bg-slate-700">
+                        + Add Society Promoter / ઉમેરો
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Table of Added Society Promoters */}
+                  <div className="overflow-x-auto mt-4">
+                    <table className="w-full border-collapse border border-slate-200 text-xs">
+                      <thead className="bg-slate-100">
+                        <tr>
+                          <th className="border p-2">#</th>
+                          <th className="border p-2">Designation</th>
+                          <th className="border p-2">Society Name</th>
+                          <th className="border p-2">Reg No.</th>
+                          <th className="border p-2">Nominated Person</th>
+                          <th className="border p-2">Share Capital</th>
+                          <th className="border p-2">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {socPromoters.length === 0 ? (
+                          <tr><td colSpan="7" className="text-center p-3 text-slate-400">હજુ સુધી કોઈ પ્રમોટર મંડળી ઉમેરાયેલ નથી.</td></tr>
+                        ) : socPromoters.map((p, idx) => (
+                          <tr key={p.id}>
+                            <td className="border p-2">{idx + 1}</td>
+                            <td className="border p-2">{p.designation}</td>
+                            <td className="border p-2">{p.socName}</td>
+                            <td className="border p-2">{p.regNo}</td>
+                            <td className="border p-2">{p.nomName} ({p.nomDesig})</td>
+                            <td className="border p-2">{p.shareCap}</td>
+                            <td className="border p-2">
+                              <button type="button" onClick={() => setSocPromoters(socPromoters.filter(item => item.id !== p.id))}
+                                className="text-red-600 underline">Remove</button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* ==================== PART C ==================== */}
+            <div className="mb-8">
+              <h2 className="text-base font-bold bg-slate-100 px-4 py-2.5 border-l-4 border-slate-800 mb-4">
+                PART C – SOCIETY DETAILS / C(i) - Additional Details according to selection of A3
+              </h2>
+
+              {!partCGroup && (
+                <p className="text-xs text-slate-500 italic p-3 bg-slate-50 border rounded">
+                  કૃપા કરીને ઉપર <strong>A3</strong> માં મંડળીનો પેટા-પ્રકાર પસંદ કરો જેથી જરૂરી દસ્તાવેજો જોઈ શકાય.
+                </p>
+              )}
+
+              {partCGroup === "G1" && (
+                <table className="w-full border-collapse border border-slate-200 text-xs">
+                  <tbody>
+                    <tr>
+                      <td className="border p-2.5 w-10">૧</td>
+                      <td className="border p-2.5">સુચિત સહકારી મંડળીની અર્થક્ષમતા અંગેનો જિલ્લા મધ્યસ્થ સહકારી બેંકનો અભિપ્રાય મેળવેલ છે કે કેમ? (હા/ના)</td>
+                      <td className="border p-2.5 w-64"><input type="file" accept=".pdf" /></td>
+                    </tr>
+                    <tr>
+                      <td className="border p-2.5">૨</td>
+                      <td className="border p-2.5">સભાસદ ખેડૂતોની જમીનની વિગત દર્શાવતું પત્રક (Farmer Verification through Agristack Farmers Registry Portal)</td>
+                      <td className="border p-2.5"><input type="file" accept=".pdf" /></td>
+                    </tr>
+                  </tbody>
+                </table>
+              )}
+
+              {partCGroup === "G2" && (
+                <table className="w-full border-collapse border border-slate-200 text-xs">
+                  <tbody>
+                    <tr>
+                      <td className="border p-2.5 w-10">૧</td>
+                      <td className="border p-2.5">જિલ્લા દૂધ ઉત્પાદક સહકારી સંઘનો અર્થક્ષમતા અંગેનો અભિપ્રાય મેળવેલ છે કે કેમ? (હા/ના)</td>
+                      <td className="border p-2.5 w-64"><input type="file" accept=".pdf" /></td>
+                    </tr>
+                    <tr>
+                      <td className="border p-2.5">૨</td>
+                      <td className="border p-2.5">સભાસદ દ્વારા દિવસ દરમિયાન ભરવામાં આવતા દૂધની વિગત દર્શાવતું પત્રક</td>
+                      <td className="border p-2.5"><input type="file" accept=".pdf" /></td>
+                    </tr>
+                    <tr>
+                      <td className="border p-2.5">૩</td>
+                      <td className="border p-2.5">સૂચિત મંડળી દ્વારા છેલ્લા ત્રણ માસમાં દિવસ દરમિયાન ખરીદવામાં આવતા દૂધની વિગત દર્શાવતું પત્રક</td>
+                      <td className="border p-2.5"><input type="file" accept=".pdf" /></td>
+                    </tr>
+                    <tr>
+                      <td className="border p-2.5">-</td>
+                      <td className="border p-2.5">છેલ્લા ૩ માસમાં ખરીદવામાં આવેલ દૂધ (લી.) (Last Month, Month-1, Month-2)</td>
+                      <td className="border p-2.5 space-y-1">
+                        <input type="number" placeholder="Last Month (લી.)" className="border p-1 w-full rounded" />
+                        <input type="number" placeholder="Last Month - 1 (લી.)" className="border p-1 w-full rounded" />
+                        <input type="number" placeholder="Last Month - 2 (લી.)" className="border p-1 w-full rounded" />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              )}
+
+              {partCGroup === "G3" && (
+                <table className="w-full border-collapse border border-slate-200 text-xs">
+                  <tbody>
+                    <tr>
+                      <td className="border p-2.5 w-10">૧</td>
+                      <td className="border p-2.5">પ્રયોજકો કોઈ ગુનાહિત પ્રવૃત્તિમાં સંડોવાયેલ નથી તે બદલનો પોલીસ અધિકારીનો દાખલો મેળવેલ છે કે કેમ? (હા/ના)</td>
+                      <td className="border p-2.5 w-64"><input type="file" accept=".pdf" /></td>
+                    </tr>
+                    <tr>
+                      <td className="border p-2.5">૨</td>
+                      <td className="border p-2.5">મંડળીના સરનામું દર્શાવતો આધાર (લાઇટ બિલ/ટેલિફોન બિલ વગેરે)</td>
+                      <td className="border p-2.5"><input type="file" accept=".pdf" /></td>
+                    </tr>
+                  </tbody>
+                </table>
+              )}
+
+              {partCGroup === "G4" && (
+                <table className="w-full border-collapse border border-slate-200 text-xs">
+                  <tbody>
+                    <tr>
+                      <td className="border p-2.5 w-10">૧</td>
+                      <td className="border p-2.5">પાણીના ઉપયોગ માટેનું સિંચાઇ વિભાગના સક્ષમ અધિકારીનો મંજૂરી પત્ર મેળવેલ છે કે કેમ? (હા/ના)</td>
+                      <td className="border p-2.5 w-64"><input type="file" accept=".pdf" /></td>
+                    </tr>
+                    <tr>
+                      <td className="border p-2.5">૨</td>
+                      <td className="border p-2.5">મંડળીના વિસ્તારમાં આવેલ સભાસદ ખેડૂતોની પિયત જમીનની વિગત દર્શાવતું પત્રક (Agristack Farmers Registry)</td>
+                      <td className="border p-2.5"><input type="file" accept=".pdf" /></td>
+                    </tr>
+                    <tr>
+                      <td className="border p-2.5">૩</td>
+                      <td className="border p-2.5">સભાસદની જગ્યાનો ઉપયોગ કરવા દેવાની લેખિત બાંહેધરી/ભાડા કરાર</td>
+                      <td className="border p-2.5"><input type="file" accept=".pdf" /></td>
+                    </tr>
+                  </tbody>
+                </table>
+              )}
+
+              {partCGroup === "G5" && (
+                <table className="w-full border-collapse border border-slate-200 text-xs">
+                  <tbody>
+                    <tr>
+                      <td className="border p-2.5 w-10">૧</td>
+                      <td className="border p-2.5">સભાસદો કોન્ટ્રાક્ટર કે ઠેકેદાર નથી, કે મંડળીની કામગીરી જેવી બીજી કોઈ પ્રવૃતિમાં જોડાયેલા નથી, તે બાબતનું મુખ્ય પ્રયોજકનું પ્રમાણપત્ર</td>
+                      <td className="border p-2.5 w-64"><input type="file" accept=".pdf" /></td>
+                    </tr>
+                    <tr>
+                      <td className="border p-2.5">૨</td>
+                      <td className="border p-2.5">સભાસદો ઉદ્દેશો મુજબ કામ કરીને રોજગારી મેળવતા હોવા બાબતેનું મુખ્ય પ્રયોજકનું પ્રમાણપત્ર</td>
+                      <td className="border p-2.5"><input type="file" accept=".pdf" /></td>
+                    </tr>
+                  </tbody>
+                </table>
+              )}
+
+              {(partCGroup === "G6" || partCGroup === "G7") && (
+                <table className="w-full border-collapse border border-slate-200 text-xs">
+                  <tbody>
+                    <tr>
+                      <td className="border p-2.5 w-10">૧</td>
+                      <td className="border p-2.5">જમીન માલિકીનો આધાર / સભાસદોના મકાન કે પ્લોટની યાદી દર્શાવતું પત્રક</td>
+                      <td className="border p-2.5 w-64"><input type="file" accept=".pdf" /></td>
+                    </tr>
+                    <tr>
+                      <td className="border p-2.5">૨</td>
+                      <td className="border p-2.5">પ્રયોજકોનો પ્લોટ/મકાન માલિક હોવાનો આધાર અને મંજૂર થયેલ પ્લાન/નકશો (Larger PDF)</td>
+                      <td className="border p-2.5"><input type="file" accept=".pdf" /></td>
+                    </tr>
+                    <tr>
+                      <td className="border p-2.5">૩</td>
+                      <td className="border p-2.5">બાંધકામ પરવાનગી માટેની સક્ષમ અધિકારીની મંજૂરી અને અશાંતધારાનું એકરારનામું</td>
+                      <td className="border p-2.5"><input type="file" accept=".pdf" /></td>
+                    </tr>
+                    <tr>
+                      <td className="border p-2.5">-</td>
+                      <td className="border p-2.5">TP Scheme, RERA નોંધણી નંબર અને Building Use Certificate</td>
+                      <td className="border p-2.5 space-y-1">
+                        <input type="text" placeholder="TP Scheme" className="border p-1 w-full rounded" />
+                        <input type="text" placeholder="RERA નોંધણી નંબર" className="border p-1 w-full rounded" />
+                        <input type="file" accept=".pdf" />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              )}
+
+              {partCGroup === "G8" && (
+                <table className="w-full border-collapse border border-slate-200 text-xs">
+                  <tbody>
+                    <tr>
+                      <td className="border p-2.5 w-10">૧</td>
+                      <td className="border p-2.5">સભાસદોની જમીનની વિગત દર્શાવતું પત્રક</td>
+                      <td className="border p-2.5 w-64"><input type="file" accept=".pdf" /></td>
+                    </tr>
+                    <tr>
+                      <td className="border p-2.5">૨</td>
+                      <td className="border p-2.5">સભાસદો મંડળી મારફત ખરીદ-વેચાણ સંબંધે કામગીરી કરશે તેવી સામૂહિક બાંહેધરી</td>
+                      <td className="border p-2.5"><input type="file" accept=".pdf" /></td>
+                    </tr>
+                    <tr>
+                      <td className="border p-2.5">૩</td>
+                      <td className="border p-2.5">સભાસદની જગ્યાનો ઉપયોગ કરવા દેવાની લેખિત બાંહેધરી/ભાડા કરાર</td>
+                      <td className="border p-2.5"><input type="file" accept=".pdf" /></td>
+                    </tr>
+                  </tbody>
+                </table>
+              )}
+
+              {partCGroup === "G9" && (
+                <table className="w-full border-collapse border border-slate-200 text-xs">
+                  <tbody>
+                    <tr>
+                      <td className="border p-2.5 w-10">૧</td>
+                      <td className="border p-2.5">મંડળીના ઉદ્દેશો મુજબ સભાસદોની કામગીરી દર્શાવતું પત્રક</td>
+                      <td className="border p-2.5 w-64"><input type="file" accept=".pdf" /></td>
+                    </tr>
+                    <tr>
+                      <td className="border p-2.5">૨</td>
+                      <td className="border p-2.5">મંડળીના સરનામું દર્શાવતો આધાર (લાઇટ બિલ/ટેલિફોન બિલ વગેરે)</td>
+                      <td className="border p-2.5"><input type="file" accept=".pdf" /></td>
+                    </tr>
+                  </tbody>
+                </table>
+              )}
+
+              {/* B(i) Fixed Mandatory Documents */}
+              <h3 className="text-sm font-semibold text-slate-700 mt-6 mb-2">
+                B(i) - (Fixed for All Cooperative Societies) / તમામ સહકારી મંડળીઓ માટે ફરજિયાત દસ્તાવેજો
+              </h3>
+              <table className="w-full border-collapse border border-slate-200 text-xs">
+                <thead className="bg-slate-100">
+                  <tr>
+                    <th className="border p-2 w-12">અ.નં.</th>
+                    <th className="border p-2">વિગત</th>
+                    <th className="border p-2 w-24">ફરજિયાત</th>
+                    <th className="border p-2 w-72">અપલોડ</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="border p-2">૧</td>
+                    <td className="border p-2">ફોર્મ-અ, અરજી</td>
+                    <td className="border p-2">હા</td>
+                    <td className="border p-2"><span className="bg-slate-200 px-2 py-0.5 rounded">Autogenerated</span></td>
+                  </tr>
+                  <tr>
+                    <td className="border p-2">૨</td>
+                    <td className="border p-2">ઠરાવોની પ્રમાણિત નકલ</td>
+                    <td className="border p-2">હા</td>
+                    <td className="border p-2"><input type="file" accept=".pdf" required /></td>
+                  </tr>
+                  <tr>
+                    <td className="border p-2">૩</td>
+                    <td className="border p-2">શેર મૂડી અને દાખલ ફી સાથેની સભાસદ યાદી</td>
+                    <td className="border p-2">હા</td>
+                    <td className="border p-2"><input type="file" accept=".pdf" required /></td>
+                  </tr>
+                  <tr>
+                    <td className="border p-2">૪</td>
+                    <td className="border p-2">બેંકમાં જમા રકમનું પ્રમાણપત્ર</td>
+                    <td className="border p-2">હા</td>
+                    <td className="border p-2"><input type="file" accept=".pdf" required /></td>
+                  </tr>
+                  <tr>
+                    <td className="border p-2">૫</td>
+                    <td className="border p-2">પ્રોજેક્ટ રીપોર્ટ</td>
+                    <td className="border p-2">હા</td>
+                    <td className="border p-2"><input type="file" accept=".pdf" required /></td>
+                  </tr>
+                  <tr>
+                    <td className="border p-2">૬</td>
+                    <td className="border p-2">ઉપનિયમો (PDF & Word File Upload)</td>
+                    <td className="border p-2">હા</td>
+                    <td className="border p-2 space-y-1">
+                      <div>PDF: <input type="file" accept=".pdf" required onChange={e => handleAChange("bylawsPdfName", e.target.files[0]?.name || "")} /></div>
+                      <div>Word: <input type="file" accept=".doc,.docx" required /></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="border p-2">૭</td>
+                    <td className="border p-2">ના વાંધા પ્રમાણપત્ર</td>
+                    <td className="border p-2">ના</td>
+                    <td className="border p-2"><input type="file" accept=".pdf" /></td>
+                  </tr>
+                  <tr>
+                    <td className="border p-2">૮</td>
+                    <td className="border p-2">તમામ પ્રાયોજકની સામૂહિક સ્વઘોષણા</td>
+                    <td className="border p-2">હા</td>
+                    <td className="border p-2"><input type="file" accept=".pdf" required /></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* ==================== MIS LIVE PREVIEW ==================== */}
+            <div className="mb-8">
+              <h2 className="text-base font-bold bg-slate-100 px-4 py-2.5 border-l-4 border-slate-800 mb-4">
+                Data to be Fetched from Registration Application of Society to MIS
+              </h2>
+              <table className="w-full border-collapse border border-slate-200 text-xs">
+                <thead className="bg-slate-100">
+                  <tr>
+                    <th className="border p-2 w-16">Sr No.</th>
+                    <th className="border p-2">Field</th>
+                    <th className="border p-2">Remarks / Live Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td className="border p-2">1</td><td className="border p-2">Proposed Name of the Society</td><td className="border p-2 font-medium">{formA.name || "-"}</td></tr>
+                  <tr><td className="border p-2">2</td><td className="border p-2">Type of Society</td><td className="border p-2">{formA.type || "-"}</td></tr>
+                  <tr><td className="border p-2">3</td><td className="border p-2">Society Type Detail (Sub Type)</td><td className="border p-2">{formA.subType || "-"}</td></tr>
+                  <tr><td className="border p-2">4</td><td className="border p-2">Address of the Society</td><td className="border p-2">{fullAddress || "-"}</td></tr>
+                  <tr><td className="border p-2">5</td><td className="border p-2">Area of Operation</td><td className="border p-2">{formA.area || "-"}</td></tr>
+                  <tr><td className="border p-2">6</td><td className="border p-2">Accumulated Share Capital</td><td className="border p-2">{formA.accShareCapital ? `₹ ${formA.accShareCapital}` : "-"}</td></tr>
+                  <tr><td className="border p-2">7</td><td className="border p-2">ByLaws (PDF Document)</td><td className="border p-2">{formA.bylawsPdfName || "Pending Upload"}</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* Submit Buttons */}
+            <div className="flex justify-end gap-3 pt-4 border-t">
+              <button type="submit" className="bg-slate-900 text-white px-6 py-2.5 rounded text-sm font-medium hover:bg-slate-800">
+                Submit Registration Application / અરજી સબમિટ કરો
+              </button>
+            </div>
+
+          </form>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App />);
+  </script>
+</body>
+</html>
