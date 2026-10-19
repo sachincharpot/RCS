@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Application Form – Registration of Cooperative Society</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- React 18 & Babel -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useMemo } = React;
+
+    // ==================== ANNEXURE-A & ANNEXURE-C COMBINED MAPPING ====================
+    // Each item holds subType, ncdOp (NCD_SectorOperations), ncdSector (NCD_Sector), and default Annexure-B objective ID
+    const SOCIETY_MASTER_DATA = {
+      "સે સેવા / પ્રાથમિક સેવા પ્રકારની મંડળીઓ": [
+        { subType: "પ્રાથમિક સેવા સહકારી મંડળી", ncdOp: "Credit", ncdSector: "Primary Agricultural Credit Society (PACS)", objId: "1" },
+        { subType: "પ્રાથમિક વિવિધ કાર્યકારી સહકારી મંડળી", ncdOp: "Credit", ncdSector: "Primary Agricultural Credit Society (PACS)", objId: "1" },
+        { subType: "પગારદાર કર્મચારીઓની શરાફી સહકારી મંડળી", ncdOp: "Credit", ncdSector: "Credit & Thrift Society", objId: "2" },
+        { subType: "મહિલાઓની બચત અને અથવા ધિરાણ સહકારી મંડળી", ncdOp: "Credit", ncdSector: "Credit & Thrift Society", objId: "2" },
+        { subType: "અન્ય બચત સહકારી મંડળી", ncdOp: "Credit", ncdSector: "Miscellaneous Credit Cooperative Society", objId: "2" },
+        { subType: "નાગરીક સહકારી બેંકો", ncdOp: "Credit", ncdSector: "Urban Cooperative Bank (UCB)", objId: "2" },
+        { subType: "શરાફી સહકારી મંડળી", ncdOp: "Credit", ncdSector: "Credit & Thrift Society", objId: "2" },
+        { subType: "દુધ ઉત્પાદક સહકારી મંડળી/સંધ", ncdOp: "Non Credit", ncdSector: "Dairy Cooperative", objId: "3" },
+        { subType: "સ્ટેટ કો.ઓપ.મિલ્ક માર્કેટીંગ ફેડરેશન", ncdOp: "N/A (Federal / State Level)", ncdSector: "N/A (Not Mapped in NCD)", objId: "3" },
+        { subType: "જિલ્લા દૂધ ઉત્પાદક સહકારી સંધ", ncdOp: "Non Credit", ncdSector: "Dairy Cooperative", objId: "3" },
+        { subType: "પ્રાથમિક દૂધ ઉત્પા સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Dairy Cooperative", objId: "3" },
+        { subType: "જિલ્લા/તાલુકા સહકારી ખરીદ વેચાણ સંધ", ncdOp: "Non Credit", ncdSector: "Marketing Cooperative Society", objId: "4" },
+        { subType: "પ્રાથમિક માર્કેટીંગ બજાર મંડળી", ncdOp: "Non Credit", ncdSector: "Marketing Cooperative Society", objId: "4" },
+        { subType: "ટોચના સહકારી કેડરેશનો", ncdOp: "N/A (Apex Federation)", ncdSector: "N/A (Not Mapped in NCD)", objId: "15" },
+        { subType: "મોટાકદની વિવિધ કાર્યકારી સહકારી મંડળી", ncdOp: "Credit", ncdSector: "Large Area Multipurpose Society (LAMPS)", objId: "1" },
+        { subType: "રાજ્ય સહકારી બેંક", ncdOp: "N/A", ncdSector: "N/A (Not Mapped in NCD)", objId: "2" },
+        { subType: "મધ્યસ્થ સહકારી બેંક", ncdOp: "N/A", ncdSector: "N/A (Not Mapped in NCD)", objId: "2" },
+        { subType: "તાલુકા સહકારી બેંક", ncdOp: "N/A", ncdSector: "N/A (Not Mapped in NCD)", objId: "2" },
+        { subType: "રાજ્ય સહકારી જમીન વિકાસ બેંક", ncdOp: "N/A", ncdSector: "N/A (Not Mapped in NCD)", objId: "1" },
+        { subType: "પ્રાથમિક કૃષિ ધિરાણ મંડળી", ncdOp: "Credit", ncdSector: "Primary Agricultural Credit Society (PACS)", objId: "1" },
+        { subType: "કર્મચારીઓની ધિરાણ મંડળી", ncdOp: "Credit", ncdSector: "Credit & Thrift Society", objId: "2" },
+        { subType: "બહુહેતક સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Multipurpose Cooperative", objId: "12" },
+        { subType: "ફાર્મર પ્રોડયુસર સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Agriculture & Allied Cooperative", objId: "4" },
+        { subType: "પ્રાકૃતિક ખેતી સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Agriculture & Allied Cooperative", objId: "4" }
+      ],
+      "ઉ ઉત્પાદન/મંજુર ઉત્પાદન પ્રકારની સહકારી મંડળીઓ": [
+        { subType: "પ્રાથમિક મજુર કામદાર સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Labour Cooperative", objId: "6" },
+        { subType: "ખેતી કામદારોની સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Labour Cooperative", objId: "6" },
+        { subType: "જંગલ કામદાર સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Labour Cooperative", objId: "6" },
+        { subType: "ઉત્પાદન સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Marketing Cooperative Society", objId: "5" },
+        { subType: "મરધા-બતકા ઉછેર સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Livestock & Poultry Cooperative", objId: "3" },
+        { subType: "મત્સ્યોધ્યોગ સહકારી મંડળી/ સંધો", ncdOp: "Non Credit", ncdSector: "Fishery Cooperative", objId: "7" },
+        { subType: "ફળ અને શાકભાજી ઉત્પાદકોની સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Marketing Cooperative Society", objId: "4" },
+        { subType: "તમાકુ ઉત્પન્ન બજાર મંડળી", ncdOp: "Non Credit", ncdSector: "Marketing Cooperative Society", objId: "4" },
+        { subType: "શ્રમયોગી વિકાસ સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Labour Cooperative", objId: "6" },
+        { subType: "શેરડી ઉત્પાદન કરનારી સહકારી મંડળી/ સંઘ", ncdOp: "Non Credit", ncdSector: "Sugar Mills Cooperative", objId: "5" },
+        { subType: "તમાકુ ઉત્પન્ન કરનારી સહકારી મંડળીઓ/ સંધ", ncdOp: "Non Credit", ncdSector: "Marketing Cooperative Society", objId: "5" },
+        { subType: "કપાસ ઉત્પન્ન કરનારી સહકારી મંડળી/ સંધ", ncdOp: "Non Credit", ncdSector: "Marketing Cooperative Society", objId: "5" },
+        { subType: "તેલીબિયા ઉત્પન્ન કરનારી સહકારી મંડળી સંધ", ncdOp: "Non Credit", ncdSector: "Marketing Cooperative Society", objId: "5" },
+        { subType: "કપાસ જિનીંગ પ્રેસીંગ પ્રોસેસીંગ મડળી/ સંધ", ncdOp: "Non Credit", ncdSector: "Agro Processing / Industrial Cooperative", objId: "5" },
+        { subType: "ઓઇલ મિલ", ncdOp: "Non Credit", ncdSector: "Agro Processing / Industrial Cooperative", objId: "5" },
+        { subType: "હાથછડ ચોખાની મિલ", ncdOp: "Non Credit", ncdSector: "Agro Processing / Industrial Cooperative", objId: "5" },
+        { subType: "ચોખાની મિલ", ncdOp: "Non Credit", ncdSector: "Agro Processing / Industrial Cooperative", objId: "5" },
+        { subType: "રાજ્ય કક્ષાના મજુર કામદાર સંધ", ncdOp: "Non Credit", ncdSector: "Labour Cooperative", objId: "6" },
+        { subType: "જિલ્લા કક્ષાના મજુર કામદાર સંધ", ncdOp: "Non Credit", ncdSector: "Labour Cooperative", objId: "6" },
+        { subType: "હાથશાળ રાજ્ય કક્ષા (ફેડરેશન)", ncdOp: "Non Credit", ncdSector: "Handloom Textile & Weavers Cooperative", objId: "5" },
+        { subType: "હાથશાળ (જીલ્લા સંઘ)", ncdOp: "Non Credit", ncdSector: "Handloom Textile & Weavers Cooperative", objId: "5" },
+        { subType: "હાથશાળ/વણાટ", ncdOp: "Non Credit", ncdSector: "Handloom Textile & Weavers Cooperative", objId: "5" },
+        { subType: "ખાદી વણાટ/ખાદી ગ્રામોદ્યોગ", ncdOp: "Non Credit", ncdSector: "Khadi Gramodyog", objId: "5" },
+        { subType: "હાથછડ", ncdOp: "Non Credit", ncdSector: "Handicraft Cooperative", objId: "5" },
+        { subType: "નીરા તાડગોળ", ncdOp: "Non Credit", ncdSector: "Miscellaneous Non Credit", objId: "5" },
+        { subType: "પ્રાથમિક પાવરલુમ વણાટ", ncdOp: "Non Credit", ncdSector: "Handloom Textile & Weavers Cooperative", objId: "5" },
+        { subType: "રાજ્ય કક્ષા સંઘ (હસ્તકલા)", ncdOp: "N/A", ncdSector: "N/A (Not Mapped in NCD)", objId: "15" },
+        { subType: "જીલ્લા સંઘ (હસ્તકલા/ચર્મોદ્યોગ/મહિલા )", ncdOp: "N/A", ncdSector: "N/A (Not Mapped in NCD)", objId: "15" },
+        { subType: "ચામડા ઉખેડવા/કમાવવા મંડળીઓ", ncdOp: "Non Credit", ncdSector: "Handicraft Cooperative", objId: "5" },
+        { subType: "માટીકામ સહકારી મંડળીઓ", ncdOp: "Non Credit", ncdSector: "Handicraft Cooperative", objId: "5" },
+        { subType: "તેલધાણી મંડળી", ncdOp: "Non Credit", ncdSector: "Agro Processing / Industrial Cooperative", objId: "5" },
+        { subType: "સુથારી/સ્ટીલ ફેબ્રીકેશન", ncdOp: "Non Credit", ncdSector: "Agro Processing / Industrial Cooperative", objId: "5" },
+        { subType: "નેતરવાંસ મંડળીઓ", ncdOp: "Non Credit", ncdSector: "Agro Processing / Industrial Cooperative", objId: "5" },
+        { subType: "પ્લાસ્ટીક ઉદ્યોગ મંડળીઓ", ncdOp: "Non Credit", ncdSector: "Miscellaneous Non Credit", objId: "5" },
+        { subType: "હસ્તક્લા- ભરત ગુથણ કામ", ncdOp: "Non Credit", ncdSector: "Handicraft Cooperative", objId: "5" },
+        { subType: "ડાયમંડ", ncdOp: "Non Credit", ncdSector: "Miscellaneous Non Credit", objId: "5" },
+        { subType: "ઉની ગાલીચા/ વુલન કાર્પેટ", ncdOp: "Non Credit", ncdSector: "Miscellaneous Non Credit", objId: "5" },
+        { subType: "પ્રીન્ટીગ /સ્ટેશનરી", ncdOp: "Non Credit", ncdSector: "Miscellaneous Non Credit", objId: "5" },
+        { subType: "રેડી મેઈડ ગારમેન્ટ મંડળીઓ", ncdOp: "Non Credit", ncdSector: "Miscellaneous Non Credit", objId: "5" },
+        { subType: "ધાતુકામ વાસણ મંડળીઓ", ncdOp: "Non Credit", ncdSector: "Miscellaneous Non Credit", objId: "5" },
+        { subType: "ફિલ્મ મેકીંગ મંડળીઓ", ncdOp: "Non Credit", ncdSector: "Miscellaneous Non Credit", objId: "12" },
+        { subType: "મીઠા મંડળીઓ", ncdOp: "Non Credit", ncdSector: "Miscellaneous Non Credit", objId: "5" },
+        { subType: "ચર્મ વસ્તુ બનાવનાર મંડળીઓ", ncdOp: "Non Credit", ncdSector: "Handicraft Cooperative", objId: "5" },
+        { subType: "બાંધકામ/ઇંટ મંડળીઓ", ncdOp: "Non Credit", ncdSector: "Agro Processing / Industrial Cooperative", objId: "5" },
+        { subType: "શેરીકલ્ચર મંડળીઓ", ncdOp: "Non Credit", ncdSector: "Sericulture Cooperative", objId: "5" },
+        { subType: "કાથીરેષા મંડળીઓ", ncdOp: "Non Credit", ncdSector: "Jute and Coir Cooperative", objId: "5" },
+        { subType: "મહિલા ગૃહ ઉદ્યોગ મંડળીઓ", ncdOp: "Non Credit", ncdSector: "Women Welfare Cooperative Society", objId: "10" },
+        { subType: "સેનેટરી મંડળીઓ", ncdOp: "Non Credit", ncdSector: "Miscellaneous Non Credit", objId: "12" },
+        { subType: "ઔદ્યોગિક વસાહત મંડળીઓ", ncdOp: "Non Credit", ncdSector: "Miscellaneous Non Credit", objId: "5" },
+        { subType: "રંગ છાપકામ", ncdOp: "Non Credit", ncdSector: "Miscellaneous Non Credit", objId: "5" },
+        { subType: "અન્ય પરચુરણ મંડળીઓ", ncdOp: "Non Credit", ncdSector: "Miscellaneous Non Credit", objId: "12" },
+        { subType: "અન્ય ફેડેરેશન (સંઘ) (હાથશાળ & હસ્તકલા સિવાય)", ncdOp: "Non Credit", ncdSector: "N/A", objId: "15" },
+        { subType: "મધમાખી ઉછેર મંડળીઓ", ncdOp: "Non Credit", ncdSector: "Bee Farming Cooperative", objId: "4" }
+      ],
+      "ભ ગ્રાહક સામે ગ્રાહક સહકારી ભંડાર પ્રકારની સહકારી મંડળી": [
+        { subType: "કન્ઝ્યુમર્સ ફેડરેશન", ncdOp: "Non Credit", ncdSector: "Consumer Cooperative", objId: "8" },
+        { subType: "જથ્થાબંધ મધ્યસ્થ ગ્રાહક સહકારી ભંડાર", ncdOp: "Non Credit", ncdSector: "Consumer Cooperative", objId: "8" },
+        { subType: "પ્રાથમિક ભંડારો(વિધ્યાર્થી) ગ્રાહક ભંડાર", ncdOp: "Non Credit", ncdSector: "Consumer Cooperative", objId: "8" },
+        { subType: "રેલ્વે કામદાર ભંડાર", ncdOp: "Non Credit", ncdSector: "Consumer Cooperative", objId: "8" },
+        { subType: "મિલ કામદાર ભંડાર(સહકારી કેરીનો સહિત)", ncdOp: "Non Credit", ncdSector: "Consumer Cooperative", objId: "8" },
+        { subType: "રાજ્યકક્ષાના ગ્રાહક ભંડારો", ncdOp: "Non Credit", ncdSector: "Consumer Cooperative", objId: "8" }
+      ],
+      "ધ ગૃહ મંડળીઓ": [
+        { subType: "ધર બાંધનારી સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Housing Cooperative Society", objId: "9" },
+        { subType: "હાઉસિંગ મોર્ગેજ સોસાયટીઓ(રાજ્યકક્ષાનું ફેડરેશન", ncdOp: "Non Credit", ncdSector: "Housing Cooperative Society", objId: "9" },
+        { subType: "સહિયારા ભાડુઆતોની ગૃહ મંડળી", ncdOp: "Non Credit", ncdSector: "Housing Cooperative Society", objId: "9" },
+        { subType: "રાજ્યકક્ષાના ગૃહનિર્માણ સંઘો", ncdOp: "N/A", ncdSector: "N/A (Not Mapped in NCD)", objId: "9" }
+      ],
+      "સા સામાન્ય અન્ય પ્રકારની મંડળીઓ": [
+        { subType: "શૈષણિક પ્રવૃતિઓની સેવા સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Educational & Training Cooperatives", objId: "10" },
+        { subType: "સહકારી હોસ્પિટલ", ncdOp: "Non Credit", ncdSector: "Social Welfare & Cultural Cooperative", objId: "10" },
+        { subType: "બિનપરંપરાગત સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Miscellaneous Non Credit", objId: "12" },
+        { subType: "સફાઇ કામદાર અને વિવિધ હેતુઓ માટે રચાતી સહકારી મં", ncdOp: "Non Credit", ncdSector: "Miscellaneous Non Credit", objId: "6" },
+        { subType: "ઇન્સ્યોરન્સ કો.ઓ.ઇલેકટ્રીસીટી મોટર ટ્રાન્સપોર્ટ કો.ઓ.સોસાયટી", ncdOp: "Non Credit", ncdSector: "Transport Cooperative", objId: "11" },
+        { subType: "મોટર ટ્રાન્સપોર્ટ કો ઓપ સોસાયટી", ncdOp: "Non Credit", ncdSector: "Transport Cooperative", objId: "11" },
+        { subType: "વાહન વ્યવહાર સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Transport Cooperative", objId: "11" },
+        { subType: "રીક્ષા પુલ્સ", ncdOp: "Non Credit", ncdSector: "Transport Cooperative", objId: "11" },
+        { subType: "પ્રવાસન સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Tourism Cooperative", objId: "11" },
+        { subType: "રીસોટર્સ સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Tourism Cooperative", objId: "11" },
+        { subType: "વેસ્ટ લેન્ડ ડેવલપમેન્ટ સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Miscellaneous Non Credit", objId: "14" },
+        { subType: "પુસ્તક પ્રકાશન સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Miscellaneous Non Credit", objId: "12" },
+        { subType: "વન સંરક્ષણ સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Social Welfare & Cultural Cooperative", objId: "14" },
+        { subType: "વિકાસ સેવા સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Miscellaneous Non Credit", objId: "12" },
+        { subType: "હાઉસિંગ સર્વિસ સોસાયટી", ncdOp: "Non Credit", ncdSector: "Housing Cooperative Society", objId: "9" },
+        { subType: "કોમર્શિયલ કો.ઓ.હા.સોસાયટી", ncdOp: "Non Credit", ncdSector: "Housing Cooperative Society", objId: "9" },
+        { subType: "જમીન સરંક્ષણ ખેતીવિષયક બિનધિરાણ મંડળી", ncdOp: "Non Credit", ncdSector: "Miscellaneous Non Credit", objId: "14" },
+        { subType: "બેટર લીવીંગ સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Social Welfare & Cultural Cooperative", objId: "10" },
+        { subType: "મહિલા બિનખેતીવિષયક બિનધિરાણ મંડળી", ncdOp: "Non Credit", ncdSector: "Women Welfare Cooperative Society", objId: "10" },
+        { subType: "આરોગ્ય સેવ આઓ પુરી પાડતી સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Social Welfare & Cultural Cooperative", objId: "10" },
+        { subType: "કુરિયર સર્વિસ પુરી પાડતી સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Miscellaneous Non Credit", objId: "12" },
+        { subType: "ટીફીન સર્વિસ સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Miscellaneous Non Credit", objId: "12" },
+        { subType: "સિનિયર સિટીઝન માટે વૃધ્ધાશ્રમ ચલાવતી સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Social Welfare & Cultural Cooperative", objId: "10" },
+        { subType: "ટુરિસ્ટ/ગાઇડ પુરી પાડતી સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Tourism Cooperative", objId: "11" },
+        { subType: "ગાર્ડનીંગ સર્વિસ પુરી પાડતી સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Miscellaneous Non Credit", objId: "12" },
+        { subType: "વિદ્યુત મંડળી", ncdOp: "Non Credit", ncdSector: "Miscellaneous Non Credit", objId: "12" },
+        { subType: "ધરેલુ નોકરની સેવા સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Miscellaneous Non Credit", objId: "12" },
+        { subType: "કોમ્પ્યુટર્સને લગતી સેવા પુરી પાડનારી સ.મં.લી.", ncdOp: "Non Credit", ncdSector: "Miscellaneous Non Credit", objId: "12" },
+        { subType: "વેટરનરી સેવા પુરીએ પાડનારી સહકારી મંડળી લી", ncdOp: "Non Credit", ncdSector: "Miscellaneous Non Credit", objId: "3" },
+        { subType: "ડીમેસ્ટીક સર્વિસને લગતી સહકારી મંડળી લી.", ncdOp: "Non Credit", ncdSector: "Miscellaneous Non Credit", objId: "12" },
+        { subType: "સીકયોરીટી સર્વિસ પુરા પાડનારી સ.મ.લી.", ncdOp: "Non Credit", ncdSector: "Miscellaneous Non Credit", objId: "12" },
+        { subType: "આદિવાસી સહકારી મંડળીઓ", ncdOp: "Non Credit", ncdSector: "Tribal-SC/ST Cooperative", objId: "10" }
+      ],
+      "ખે ખેતી/પિયત પ્રકારની સહકારી મંડળીઓ": [
+        { subType: "ખેતી સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Agriculture & Allied Cooperative", objId: "4" },
+        { subType: "પિયત સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Agriculture & Allied Cooperative", objId: "13" },
+        { subType: "સિંચાઇ મંડળી", ncdOp: "Non Credit", ncdSector: "Agriculture & Allied Cooperative", objId: "13" },
+        { subType: "વૃક્ષ ઉછેર સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Miscellaneous Non Credit", objId: "14" },
+        { subType: "પાણી પુરુ પાડનારી સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Agriculture & Allied Cooperative", objId: "13" },
+        { subType: "સામુદાયિક ખેતી સહકારીએ મંડળી", ncdOp: "Non Credit", ncdSector: "Agriculture & Allied Cooperative", objId: "4" },
+        { subType: "સંયુકત ખેતી સહકારીએ મંડળી", ncdOp: "Non Credit", ncdSector: "Agriculture & Allied Cooperative", objId: "4" },
+        { subType: "ગોપાલક ખેતી સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Agriculture & Allied Cooperative", objId: "3" },
+        { subType: "ગોપાલક સામુદાયિક સહકારી મંડળી", ncdOp: "Non Credit", ncdSector: "Agriculture & Allied Cooperative", objId: "3" },
+        { subType: "દુધ ઉત્પાદકોને ખેતી મંડળીઓ(ગોપાલકો દ્વારા ડેરી પ્રવૃતિઓ ચલાવતી ખેતી મંડળી)", ncdOp: "Non Credit", ncdSector: "Dairy Cooperative", objId: "3" }
+      ],
+      "સ સહકારી સંધો": [
+        { subType: "રાજ્ય સહકારી સંધ", ncdOp: "N/A", ncdSector: "N/A (Not Mapped in NCD)", objId: "15" },
+        { subType: "જિલ્લા સહકારી સંઘ", ncdOp: "N/A", ncdSector: "N/A (Not Mapped in NCD)", objId: "15" }
+      ]
+    };
+
+    // ==================== ANNEXURE-B DATA (15 OBJECTIVES) ====================
+    const ANNEXURE_B = [
+      { id: "1", label: "૧. કૃષિ ધિરાણ અને કૃષિ સેવા" },
+      { id: "2", label: "૨. બિનખેતી ધિરાણ, બચત અને બેંકિંગ" },
+      { id: "3", label: "૩. દૂધ ઉત્પાદન, ડેરી અને પશુપાલન" },
+      { id: "4", label: "૪. કૃષિ ઉત્પાદન, માર્કેટિંગ અને વેચાણ" },
+      { id: "5", label: "૫. કૃષિ અને ઔદ્યોગિક પ્રોસેસિંગ તથા ઉત્પાદન" },
+      { id: "6", label: "૬. મજૂર, શ્રમિક અને રોજગાર" },
+      { id: "7", label: "૭. મત્સ્યોદ્યોગ" },
+      { id: "8", label: "૮. ગ્રાહક સહકારી પ્રવૃત્તિ અને વિતરણ" },
+      { id: "9", label: "૯. ગૃહનિર્માણ, રહેઠાણ અને મિલકત વ્યવસ્થાપન" },
+      { id: "10", label: "૧૦. શિક્ષણ, આરોગ્ય અને સામાજિક કલ્યાણ" },
+      { id: "11", label: "૧૧. પરિવહન, પ્રવાસન અને આતિથ્ય સેવા" },
+      { id: "12", label: "૧૨. સામાન્ય સેવા અને વ્યવસાયલક્ષી સેવાઓ" },
+      { id: "13", label: "૧૩. જળસંચય, સિંચાઈ અને પાણી પુરવઠો" },
+      { id: "14", label: "૧૪. જમીન, વન અને કુદરતી સંસાધન વિકાસ" },
+      { id: "15", label: "૧૫. સહકારી સંસ્થાઓનું સંવર્ધન, સંઘીય માળખું અને અન્ય પ્રવૃત્તિઓ" }
+    ];
+
+    // Sample Gujarat Locations for Dropdowns (A8, A9, A10)
+    const LOCATION_DATA = {
+      "ગાંધીનગર (Gandhinagar)": {
+        "ગાંધીનગર (Gandhinagar)": ["સેક્ટર-૧ (Sector-1)", "સેક્ટર-૧૧ (Sector-11)", "અડાલજ (Adalaj)", "સરગાસણ (Sargasan)", "કુડાસણ (Kudasan)"],
+        "કલોલ (Kalol)": ["કલોલ શહેર (Kalol City)", "છત્રાલ (Chhatral)", "પાનસર (Pansar)"],
+        "માણસા (Mansa)": ["માણસા શહેર (Mansa City)", "ચરાડા (Charada)", "લોદ્રા (Lodra)"],
+        "દહેગામ (Dahegam)": ["દહેગામ શહેર (Dahegam City)", "રખિયાલ (Rakhiyal)", "બહિયલ (Bahiyal)"]
+      },
+      "અમદાવાદ (Ahmedabad)": {
+        "અમદાવાદ શહેર (Ahmedabad City)": ["નવરંગપુરા (Navrangpura)", "મણિનગર (Maninagar)", "બોપલ (Bopal)", "ગોતા (Gota)"],
+        "સાણંદ (Sanand)": ["સાણંદ શહેર (Sanand City)", "ચેખલા (Chekhla)", "બોળ (Bol)"],
+        "દસ્ક્રોઈ (Daskroi)": ["બારેજા (Bareja)", "કઠવાડા (Kathwada)", "હાથીજણ (Hathijan)"]
+      },
+      "સુરત (Surat)": {
+        "સુરત શહેર (Surat City)": ["અડાજણ (Adajan)", "વરાછા (Varachha)", "કતારગામ (Katargam)"],
+        "બારડોલી (Bardoli)": ["બારડોલી શહેર (Bardoli City)", "કડોદ (Kadod)", "મઢી (Madhi)"],
+        "ચોર્યાસી (Choryasi)": ["સચિન (Sachin)", "હજીરા (Hazira)"]
+      },
+      "રાજકોટ (Rajkot)": {
+        "રાજકોટ (Rajkot)": ["રાજકોટ શહેર (Rajkot City)", "બેડી (Bedi)", "માધાપર (Madhapar)"],
+        "ગોંડલ (Gondal)": ["ગોંડલ શહેર (Gondal City)", "વીરપુર (Virpur)"]
+      },
+      "વડોદરા (Vadodara)": {
+        "વડોદરા (Vadodara)": ["અલકાપુરી (Alkapuri)", "માંજલપુર (Manjalpur)", "વાઘોડિયા રોડ (Waghodia Road)"],
+        "પાદરા (Padra)": ["પાદરા શહેર (Padra City)", "ચાણસદ (Chansad)"]
+      }
+    };
+
+    function YesNoUploadRow({ srNo, question }) {
+      const [ans, setAns] = useState("Yes");
+      return (
+        <tr>
+          <td className="border p-2.5 w-12 text-center">{srNo}</td>
+          <td className="border p-2.5">{question}</td>
+          <td className="border p-2.5 w-80">
+            <div className="flex items-center gap-4 mb-2">
+              <label className="flex items-center gap-1.5 cursor-pointer">
+                <input type="radio" value="Yes" checked={ans === "Yes"} onChange={() => setAns("Yes")} /> હા (Yes)
+              </label>
+              <label className="flex items-center gap-1.5 cursor-pointer">
+                <input type="radio" value="No" checked={ans === "No"} onChange={() => setAns("No")} /> ના (No)
+              </label>
+            </div>
+            {ans === "Yes" && (
+              <div>
+                <span className="block text-[11px] text-slate-500 mb-1">હા – PDF Upload:</span>
+                <input type="file" accept=".pdf" className="w-full text-xs" />
+              </div>
+            )}
+          </td>
+        </tr>
+      );
+    }
+
+    function App() {
+      const [formA, setFormA] = useState({
+        name: "",
+        type: "",
+        subType: "",
+        ncdSectorOp: "",
+        ncdSector: "",
+        isFederal: "No",
+        isLimited: "Yes",
+        addr1: "",
+        addr2: "",
+        district: "",
+        taluka: "",
+        village: "",
+        pincode: "",
+        contact: "",
+        email: "",
+        area: "",
+        members: "",
+        objective: "",
+        fundsByShares: "Yes",
+        initialDeposit: "",
+        shareValue: "",
+        shareCapital: "",
+        accShareCapital: "",
+        entryFee: "",
+        totalEntryFee: "",
+        bankName: "",
+        bylawsPdfName: ""
+      });
+
+      const [indPromoters, setIndPromoters] = useState([]);
+      const [indDraft, setIndDraft] = useState({
+        designation: "Main Promoter / મુખ્ય પ્રમોટર",
+        name: "", address: "", district: "", taluka: "", village: "", pincode: "",
+        mobile: "", email: "", occupation: "", shareCap: "", entryFee: "",
+        pan: "", aadhaar: "", farmerReg: ""
+      });
+
+      const [socPromoters, setSocPromoters] = useState([]);
+      const [socDraft, setSocDraft] = useState({
+        designation: "Main Promoter / મુખ્ય પ્રમોટર",
+        socName: "", regNo: "", ncdId: "", address: "",
+        nomName: "", nomDesig: "Chairman / પ્રમુખ",
+        shareCap: "", entryFee: "", pan: ""
+      });
+
+      const handleAChange = (field, value) => {
+        setFormA(prev => {
+          const updated = { ...prev, [field]: value };
+          if (field === "type") {
+            updated.subType = "";
+            updated.ncdSectorOp = "";
+            updated.ncdSector = "";
+            updated.objective = "";
+          }
+          if (field === "subType") {
+            const list = SOCIETY_MASTER_DATA[prev.type] || [];
+            const found = list.find(item => item.subType === value);
+            if (found) {
+              updated.ncdSectorOp = found.ncdOp;
+              updated.ncdSector = found.ncdSector;
+              const objMatch = ANNEXURE_B.find(o => o.id === found.objId);
+              updated.objective = objMatch ? objMatch.label : "";
+            } else {
+              updated.ncdSectorOp = "";
+              updated.ncdSector = "";
+              updated.objective = "";
+            }
+          }
+          if (field === "district") {
+            updated.taluka = "";
+            updated.village = "";
+          }
+          if (field === "taluka") {
+            updated.village = "";
+          }
+          return updated;
+        });
+      };
+
+      const addIndPromoter = () => {
+        if (!indDraft.name.trim()) return alert("કૃપા કરીને પ્રમોટરનું નામ દાખલ કરો!");
+        setIndPromoters([...indPromoters, { ...indDraft, id: Date.now() }]);
+        setIndDraft({
+          designation: "Promoter / પ્રમોટર",
+          name: "", address: "", district: "", taluka: "", village: "", pincode: "",
+          mobile: "", email: "", occupation: "", shareCap: "", entryFee: "",
+          pan: "", aadhaar: "", farmerReg: ""
+        });
+      };
+
+      const addSocPromoter = () => {
+        if (!socDraft.socName.trim()) return alert("કૃપા કરીને પ્રમોટર સહકારી મંડળીનું નામ દાખલ કરો!");
+        setSocPromoters([...socPromoters, { ...socDraft, id: Date.now() }]);
+        setSocDraft({
+          designation: "Promoter / પ્રમોટર",
+          socName: "", regNo: "", ncdId: "", address: "",
+          nomName: "", nomDesig: "Chairman / પ્રમુખ",
+          shareCap: "", entryFee: "", pan: ""
+        });
+      };
+
+      const partCGroup = useMemo(() => {
+        const s = formA.subType;
+        if (!s) return null;
+        if (["પ્રાથમિક સેવા સહકારી મંડળી", "પ્રાથમિક વિવિધ કાર્યકારી સહકારી મંડળી", "પ્રાથમિક કૃષિ ધિરાણ મંડળી"].includes(s)) return "G1";
+        if (["દુધ ઉત્પાદક સહકારી મંડળી/સંધ", "સ્ટેટ કો.ઓપ.મિલ્ક માર્કેટીંગ ફેડરેશન", "જિલ્લા દૂધ ઉત્પાદક સહકારી સંધ", "પ્રાથમિક દૂધ ઉત્પા સહકારી મંડળી"].includes(s)) return "G2";
+        if (["મહિલાઓની બચત અને અથવા ધિરાણ સહકારી મંડળી", "અન્ય બચત સહકારી મંડળી", "શરાફી સહકારી મંડળી", "પગારદાર કર્મચારીઓની શરાફી સહકારી મંડળી", "કર્મચારીઓની ધિરાણ મંડળી"].includes(s)) return "G3";
+        if (["પિયત સહકારી મંડળી", "સિંચાઇ મંડળી", "પાણી પુરુ પાડનારી સહકારી મંડળી"].includes(s)) return "G4";
+        if (["પ્રાથમિક મજુર કામદાર સહકારી મંડળી", "ખેતી કામદારોની સહકારી મંડળી", "જંગલ કામદાર સહકારી મંડળી"].includes(s)) return "G5";
+        if (["ધર બાંધનારી સહકારી મંડળી", "સહિયારા ભાડુઆતોની ગૃહ મંડળી"].includes(s)) return "G6";
+        if (["હાઉસિંગ સર્વિસ સોસાયટી", "કોમર્શિયલ કો.ઓ.હા.સોસાયટી"].includes(s)) return "G7";
+        if (["પ્રાથમિક માર્કેટીંગ બજાર મંડળી", "ફાર્મર પ્રોડયુસર સહકારી મંડળી", "પ્રાકૃતિક ખેતી સહકારી મંડળી"].includes(s)) return "G8";
+        return "G9";
+      }, [formA.subType]);
+
+      const fullAddress = [formA.addr1, formA.addr2, formA.village, formA.taluka, formA.district, formA.pincode].filter(Boolean).join(", ");
+
+      return (
+        <div className="max-w-5xl mx-auto my-8 bg-white border border-slate-200 shadow-sm rounded-lg p-6 md:p-10">
+          {/* Header */}
+          <div className="border-b-2 border-slate-800 pb-4 mb-6 text-center">
+            <h1 className="text-xl md:text-2xl font-bold text-slate-900">
+              Application Form – Registration of Cooperative Society
+            </h1>
+            <p className="text-base text-slate-600 mt-1">(સહકારી મંડળી નોંધણી ફોર્મ)</p>
+          </div>
+
+          <form onSubmit={(e) => { e.preventDefault(); alert("અરજી સફળતાપૂર્વક સબમિટ થઈ ગઈ છે!"); }}>
+            
+            {/* ==================== PART A ==================== */}
+            <div className="mb-8">
+              <h2 className="text-base font-bold bg-slate-100 px-4 py-2.5 border-l-4 border-slate-800 mb-4">
+                PART A : General Details / સામાન્ય વિગતો
+              </h2>
+
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                {/* A1 */}
+                <div className="md:col-span-12">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A1. Proposed Name of Cooperative Society <span className="font-normal text-slate-500 block">સુચિત સહકારી મંડળીનું નામ</span>
+                  </label>
+                  <input type="text" required value={formA.name} onChange={e => handleAChange("name", e.target.value)}
+                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-slate-800" />
+                </div>
+
+                {/* A2 */}
+                <div className="md:col-span-6">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A2. Type of Co-operative Societies <span className="font-normal text-slate-500 block">સહકારી મંડળીનો પ્રકાર (Annexure-A)</span>
+                  </label>
+                  <select required value={formA.type} onChange={e => handleAChange("type", e.target.value)}
+                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm bg-white">
+                    <option value="">-- પ્રકાર પસંદ કરો --</option>
+                    {Object.keys(SOCIETY_MASTER_DATA).map(t => <option key={t} value={t}>{t}</option>)}
+                  </select>
+                </div>
+
+                {/* A3 */}
+                <div className="md:col-span-6">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A3. Society Type Details <span className="font-normal text-slate-500 block">સહકારી મંડળીના પ્રકારની વિગત (Annexure-A)</span>
+                  </label>
+                  <select required value={formA.subType} onChange={e => handleAChange("subType", e.target.value)}
+                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm bg-white">
+                    <option value="">-- પેટા પ્રકાર પસંદ કરો --</option>
+                    {(SOCIETY_MASTER_DATA[formA.type] || []).map(item => (
+                      <option key={item.subType} value={item.subType}>{item.subType}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* NEW ROW: NCD Portal Sector and SubSector (Autogenerated as per Annexure-C & A3) */}
+                <div className="md:col-span-12 bg-slate-50 border border-slate-200 rounded p-3">
+                  <label className="block text-xs font-semibold text-slate-700 mb-2">
+                    NCD Portal Sector and SubSector <span className="font-normal text-slate-500">(Autogenerated as per Annexure-C and Selection of A3)</span>
+                  </label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <span className="block text-[11px] font-medium text-slate-500 mb-1">NCD_SectorOperations:</span>
+                      <input
+                        type="text"
+                        readOnly
+                        value={formA.ncdSectorOp || "Auto-generated upon A3 selection"}
+                        className="w-full border border-slate-200 bg-slate-100 text-slate-700 rounded px-3 py-1.5 text-xs font-semibold cursor-not-allowed"
+                      />
+                    </div>
+                    <div>
+                      <span className="block text-[11px] font-medium text-slate-500 mb-1">NCD_Sector:</span>
+                      <input
+                        type="text"
+                        readOnly
+                        value={formA.ncdSector || "Auto-generated upon A3 selection"}
+                        className="w-full border border-slate-200 bg-slate-100 text-slate-700 rounded px-3 py-1.5 text-xs font-semibold cursor-not-allowed"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* A4 */}
+                <div className="md:col-span-6">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A4. Is the proposed Cooperative Society Federal? (Yes/No) <span className="font-normal text-slate-500 block">સુચિત સહકારી મંડળી સમવાયી છે? (હા/ના)</span>
+                  </label>
+                  <div className="flex gap-6 pt-1 text-sm">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="radio" name="isFederal" value="No" checked={formA.isFederal === "No"} onChange={e => handleAChange("isFederal", e.target.value)} /> No / ના
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="radio" name="isFederal" value="Yes" checked={formA.isFederal === "Yes"} onChange={e => handleAChange("isFederal", e.target.value)} /> Yes / હા
+                    </label>
+                  </div>
+                </div>
+
+                {/* A5 */}
+                <div className="md:col-span-6">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A5. Is the proposed cooperative society Limited? (Yes/No) <span className="font-normal text-slate-500 block">શું પ્રસ્તાવિત સહકારી મંડળી મર્યાદિત છે? (હા/ના)</span>
+                  </label>
+                  <div className="flex gap-6 pt-1 text-sm">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="radio" name="isLimited" value="Yes" checked={formA.isLimited === "Yes"} onChange={e => handleAChange("isLimited", e.target.value)} /> Yes / હા
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="radio" name="isLimited" value="No" checked={formA.isLimited === "No"} onChange={e => handleAChange("isLimited", e.target.value)} /> No / ના
+                    </label>
+                  </div>
+                </div>
+
+                {/* A6 & A7 */}
+                <div className="md:col-span-6">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A6. Address Line 1 <span className="font-normal text-slate-500 block">સરનામું લાઇન ૧</span>
+                  </label>
+                  <input type="text" value={formA.addr1} onChange={e => handleAChange("addr1", e.target.value)}
+                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm" />
+                </div>
+
+                <div className="md:col-span-6">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A7. Address Line 2 <span className="font-normal text-slate-500 block">સરનામું લાઇન 2</span>
+                  </label>
+                  <input type="text" value={formA.addr2} onChange={e => handleAChange("addr2", e.target.value)}
+                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm" />
+                </div>
+
+                {/* A8, A9, A10 Dropdowns & A11 Pincode */}
+                <div className="md:col-span-3">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    A8. District <span className="font-normal text-slate-500 block">જિલ્લો (Dropdown)</span>
+                  </label>
+                  <select value={formA.district} onChange={e => handleAChange("district", e.target.value)}
+                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm bg-white">
+                    <option value="">-- જિલ્લો પસંદ કરો --</option>
+                    {Object.keys(LOCATION_DATA).map(d => <option key={d} value={d}>{d}</option>)}
+                  </select>
+                </div>
+
+                <div className="md:col-span-3">
